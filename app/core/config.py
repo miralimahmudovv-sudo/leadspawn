@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     app_name: str = "LeadSpawn"
     environment: str = "development"
     debug: bool = True
+    google_places_api_key: str = ""
 
 
 @lru_cache
