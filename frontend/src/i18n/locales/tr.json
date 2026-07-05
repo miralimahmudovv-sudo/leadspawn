@@ -1,0 +1,77 @@
+{
+  "hero": {
+    "badge": "OpenStreetMap ile güçlendirildi",
+    "title": "Yerel İşletme Müşterilerini Saniyeler İçinde Bulun",
+    "subtitle": "Herhangi bir şehirde herhangi bir sektörü arayın; isimleri, telefonları, web sitelerini ve adresleri dışa aktarmaya hazır şekilde alın."
+  },
+  "form": {
+    "businessType": "İşletme türü",
+    "businessTypePlaceholder": "örn. diş hekimi, fırın, avukat…",
+    "country": "Ülke",
+    "countryPlaceholder": "örn. Almanya",
+    "city": "Şehir",
+    "cityPlaceholder": "örn. Berlin",
+    "hasWebsite": "Web sitesi var mı?",
+    "hasPhone": "Telefon var mı?",
+    "leadCount": "Müşteri sayısı",
+    "generate": "Müşteri Bul",
+    "searching": "Aranıyor…"
+  },
+  "loading": {
+    "locating": "{{city}} haritada bulunuyor…",
+    "scanning": "Bölge işletmeler için taranıyor…",
+    "collecting": "İletişim bilgileri toplanıyor…",
+    "finalizing": "Müşteri listeniz hazırlanıyor…"
+  },
+  "results": {
+    "title": "Müşterileriniz",
+    "found": "{{count}} müşteri bulundu",
+    "found_other": "{{count}} müşteri bulundu",
+    "cached": "Anında (önbellekten)",
+    "discovering": "İşletmeler keşfediliyor…",
+    "table": "Tablo",
+    "cards": "Kartlar",
+    "export": "Dışa aktar",
+    "exportCsv": "CSV indir",
+    "exported": "Müşteri listesi dışa aktarıldı",
+    "idleTitle": "Müşterileriniz burada görünecek",
+    "idleSubtitle": "Yukarıdaki formu doldurun ve Müşteri Bul'a basın.",
+    "emptyTitle": "İşletme bulunamadı",
+    "emptySubtitle": "Daha genel bir işletme türü veya daha büyük bir şehir deneyin.",
+    "errorTitle": "Bir şeyler ters gitti",
+    "retry": "Tekrar dene",
+    "searchDone": "{{city}} şehrinde {{count}} müşteri bulundu"
+  },
+  "lead": {
+    "name": "İsim",
+    "website": "Web sitesi",
+    "phone": "Telefon",
+    "address": "Adres",
+    "rating": "Puan",
+    "coordinates": "Koordinatlar",
+    "actions": "İşlemler",
+    "openWebsite": "Web sitesini aç",
+    "openMaps": "Haritada aç",
+    "copyPhone": "Telefonu kopyala",
+    "copyAddress": "Adresi kopyala",
+    "phoneCopied": "Telefon numarası kopyalandı",
+    "addressCopied": "Adres kopyalandı",
+    "noValue": "—"
+  },
+  "errors": {
+    "network": "Sunucuya ulaşılamadı. API çalışıyor mu?",
+    "locationNotFound": "Bu şehri bulamadık. Yazımı ve ülkeyi kontrol edin.",
+    "invalidInput": "Lütfen form alanlarını kontrol edip tekrar deneyin.",
+    "providerUnavailable": "Veri sağlayıcı şu anda meşgul. Lütfen birazdan tekrar deneyin."
+  },
+  "theme": {
+    "toggle": "Temayı değiştir"
+  },
+  "language": {
+    "select": "Dili değiştir"
+  },
+  "footer": {
+    "tagline": "Serbest çalışanlar ve ajanslar için yerel işletme müşterileri.",
+    "attribution": "Veri © OpenStreetMap katkıda bulunanlar"
+  }
+}

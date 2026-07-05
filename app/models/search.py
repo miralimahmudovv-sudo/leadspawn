@@ -13,7 +13,6 @@ class CachedSearch(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    # Normalized (lowercased, whitespace-collapsed) cache key components.
     query: Mapped[str] = mapped_column(String(120), index=True)
     city: Mapped[str] = mapped_column(String(120))
     country: Mapped[str] = mapped_column(String(120))

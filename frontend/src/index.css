@@ -80,7 +80,6 @@ body {
   @apply bg-background text-foreground font-sans antialiased;
 }
 
-/* Enabled briefly by the ThemeProvider so the switch animates smoothly. */
 html.theme-transition,
 html.theme-transition * {
   transition:

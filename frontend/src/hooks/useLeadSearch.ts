@@ -25,8 +25,6 @@ const INITIAL_STATE: LeadSearchState = {
   meta: null,
 }
 
-// Results arrive in one response; revealing them one by one makes the
-// search feel like a live discovery process.
 const MIN_REVEAL_DELAY_MS = 90
 const MAX_REVEAL_DELAY_MS = 170
 const TARGET_REVEAL_TOTAL_MS = 3500

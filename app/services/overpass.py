@@ -11,7 +11,6 @@ from app.services.osm_tags import tags_for_query
 logger = logging.getLogger(__name__)
 
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
-# Tried in order; public Overpass instances are often busy, so we fail over.
 OVERPASS_URLS = (
     "https://overpass-api.de/api/interpreter",
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
@@ -21,29 +20,16 @@ USER_AGENT = "LeadSpawn/0.1 (miralimahmudovv@gmail.com)"
 REQUEST_TIMEOUT = httpx.Timeout(45.0, connect=10.0)
 OVERPASS_QUERY_TIMEOUT_SECONDS = 30
 
-# Fallback tag keys regex-matched when the query has no exact tag mapping.
-# Matching against business names was tried and removed: regex-scanning every
-# named element in a large city routinely exceeds public-server time limits.
 BUSINESS_TAG_KEYS = ("amenity", "shop", "craft", "office", "healthcare", "cuisine")
 
-# We always fetch a generous set so one cached result can serve many different
-# limit/filter combinations without re-hitting the public Overpass servers.
 MAX_FETCH = 150
 
-# Coordinates rounded to ~100m for deduplication of node/way twins.
 DEDUP_COORD_PRECISION = 3
 
-# The query is interpolated into an Overpass QL regex; anything outside this
-# set could change the meaning of the generated query.
 SAFE_QUERY_PATTERN = re.compile(r"[\w\s\-&'.]+", re.UNICODE)
 
 
 async def fetch_businesses(query: str, city: str, country: str) -> list[Business]:
-    """Fetch the full deduplicated business set for a location.
-
-    Returns everything (up to MAX_FETCH), unfiltered and unlimited, so the
-    caller can cache it once and apply per-request limit/filters on top.
-    """
     if not SAFE_QUERY_PATTERN.fullmatch(query):
         raise LeadProviderError("Query contains unsupported characters")
 
@@ -88,9 +74,6 @@ async def _geocode(client: httpx.AsyncClient, city: str, country: str) -> dict[s
 
 
 def _bbox_from(place: dict[str, Any]) -> str:
-    # Bounding-box filters hit the Overpass spatial index directly and are
-    # far faster than administrative-area filters, which time out for large
-    # cities under load. Nominatim returns [south, north, west, east].
     south, north, west, east = place["boundingbox"]
     return f"({south},{west},{north},{east})"
 
@@ -151,8 +134,6 @@ async def _post_to_instance(
     elements: list[dict[str, Any]] = data.get("elements", [])
     remark = data.get("remark")
     if remark:
-        # Overpass reports query timeouts as a remark on an otherwise-200
-        # response; an empty result with a remark is a failure, not "no data".
         logger.warning("Overpass remark from %s: %s", url, remark)
         if not elements:
             raise LeadProviderError(f"Overpass query did not complete: {remark}")

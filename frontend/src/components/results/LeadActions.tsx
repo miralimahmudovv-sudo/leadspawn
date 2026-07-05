@@ -17,7 +17,6 @@ export function LeadActions({ lead }: { lead: Lead }) {
     try {
       await navigator.clipboard.writeText(value)
     } catch {
-      // Clipboard API unavailable (older browsers, restricted contexts).
       const textarea = document.createElement('textarea')
       textarea.value = value
       textarea.style.position = 'fixed'

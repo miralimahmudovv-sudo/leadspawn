@@ -2,8 +2,6 @@ import re
 
 TagPairs = tuple[tuple[str, str], ...]
 
-# User-friendly business terms mapped to exact OSM tags. Exact tag matches
-# are faster and more precise than regex matching on public Overpass servers.
 TAG_MAPPINGS: dict[str, TagPairs] = {
     "dentist": (("amenity", "dentist"), ("healthcare", "dentist")),
     "restaurant": (("amenity", "restaurant"),),
@@ -68,7 +66,6 @@ def normalize_query(query: str) -> str:
 
 
 def tags_for_query(query: str) -> TagPairs | None:
-    """Return exact OSM tags for a query, or None when no mapping exists."""
     normalized = normalize_query(query)
     if normalized in TAG_MAPPINGS:
         return TAG_MAPPINGS[normalized]

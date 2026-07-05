@@ -31,12 +31,6 @@ async def get_leads(
     has_website: bool,
     has_phone: bool,
 ) -> LeadResults:
-    """Return leads for a search, serving from cache when a fresh entry exists.
-
-    The cache stores the full unfiltered result set per (query, city, country);
-    limit and contact filters are applied on top so one cached row satisfies
-    many different request shapes.
-    """
     key = _CacheKey(
         query=normalize_query(query),
         city=normalize_query(city),
@@ -80,7 +74,6 @@ async def _get_fresh_cache(
     if row is None:
         return None
     if row.fetched_at < cutoff:
-        # Stale: drop it so the caller re-fetches and repopulates.
         await session.delete(row)
         await session.commit()
         return None
@@ -102,8 +95,6 @@ async def _store_cache(
     try:
         await session.commit()
     except IntegrityError:
-        # A concurrent identical request won the race and inserted first;
-        # discard ours and reuse theirs on the next lookup.
         await session.rollback()
         logger.info("Concurrent cache insert for %s — keeping existing row", key)
 

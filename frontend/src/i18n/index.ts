@@ -6,12 +6,14 @@ import de from './locales/de.json'
 import en from './locales/en.json'
 import es from './locales/es.json'
 import ru from './locales/ru.json'
+import tr from './locales/tr.json'
 
 export const LANGUAGES = [
   { code: 'en', label: 'English' },
   { code: 'ru', label: 'Русский' },
   { code: 'de', label: 'Deutsch' },
   { code: 'es', label: 'Español' },
+  { code: 'tr', label: 'Türkçe' },
 ] as const
 
 void i18n
@@ -23,6 +25,7 @@ void i18n
       ru: { translation: ru },
       de: { translation: de },
       es: { translation: es },
+      tr: { translation: tr },
     },
     fallbackLng: 'en',
     interpolation: { escapeValue: false },

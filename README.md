@@ -4,6 +4,8 @@ LeadSpawn helps freelancers and agencies discover potential clients.
 Enter a business niche, city, and country — get back a list of companies
 with contact details, ready to browse, filter, and export as CSV.
 
+> Подробный разбор проекта на русском: [README.ru.md](README.ru.md).
+
 ## Tech stack
 
 **Backend:** Python 3.12, FastAPI, httpx, SQLAlchemy (async) + asyncpg,
@@ -55,6 +57,21 @@ Set `DATABASE_URL` in `.env` (see `.env.example`), then apply migrations:
 
 Schema changes: edit the models in `app/models/`, then
 `alembic revision --autogenerate -m "…"` and `alembic upgrade head`.
+
+## Run with Docker
+
+The whole stack (PostgreSQL + API + frontend) runs with one command:
+
+```bash
+docker compose up --build
+```
+
+- http://localhost:8080 — the app (nginx serves the built frontend and proxies
+  `/api` to the API container)
+- http://localhost:8000/docs — API docs
+
+The `api` container runs `alembic upgrade head` on startup, so the schema is
+created automatically. Postgres data persists in the `pgdata` volume.
 
 ## Local development
 
