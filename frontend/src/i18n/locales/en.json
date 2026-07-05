@@ -1,0 +1,75 @@
+﻿{
+  "hero": {
+    "badge": "Powered by OpenStreetMap",
+    "title": "Find Local Business Leads in Seconds",
+    "subtitle": "Search any niche in any city and get names, phones, websites and addresses — ready to export and reach out."
+  },
+  "form": {
+    "businessType": "Business type",
+    "businessTypePlaceholder": "e.g. dentist, bakery, lawyer…",
+    "country": "Country",
+    "countryPlaceholder": "e.g. Germany",
+    "city": "City",
+    "cityPlaceholder": "e.g. Berlin",
+    "hasWebsite": "Has website?",
+    "leadCount": "Number of leads",
+    "generate": "Generate Leads",
+    "searching": "Searching…"
+  },
+  "loading": {
+    "locating": "Locating {{city}} on the map…",
+    "scanning": "Scanning the area for businesses…",
+    "collecting": "Collecting contact details…",
+    "finalizing": "Polishing your lead list…"
+  },
+  "results": {
+    "title": "Your leads",
+    "found": "{{count}} lead found",
+    "found_other": "{{count}} leads found",
+    "discovering": "Discovering businesses…",
+    "table": "Table",
+    "cards": "Cards",
+    "export": "Export",
+    "exportCsv": "Download CSV",
+    "exported": "Lead list exported",
+    "idleTitle": "Your leads will appear here",
+    "idleSubtitle": "Fill in the form above and hit Generate Leads.",
+    "emptyTitle": "No businesses found",
+    "emptySubtitle": "Try a broader business type or a bigger city.",
+    "errorTitle": "Something went wrong",
+    "retry": "Try again",
+    "searchDone": "Found {{count}} leads in {{city}}"
+  },
+  "lead": {
+    "name": "Name",
+    "website": "Website",
+    "phone": "Phone",
+    "address": "Address",
+    "rating": "Rating",
+    "coordinates": "Coordinates",
+    "actions": "Actions",
+    "openWebsite": "Open website",
+    "openMaps": "Open in Maps",
+    "copyPhone": "Copy phone",
+    "copyAddress": "Copy address",
+    "phoneCopied": "Phone number copied",
+    "addressCopied": "Address copied",
+    "noValue": "—"
+  },
+  "errors": {
+    "network": "Could not reach the server. Is the API running?",
+    "locationNotFound": "We couldn't find that city. Check the spelling and country.",
+    "invalidInput": "Please check the form fields and try again.",
+    "providerUnavailable": "The data provider is busy right now. Please try again in a moment."
+  },
+  "theme": {
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "select": "Change language"
+  },
+  "footer": {
+    "tagline": "Local business leads for freelancers and agencies.",
+    "attribution": "Data © OpenStreetMap contributors"
+  }
+}

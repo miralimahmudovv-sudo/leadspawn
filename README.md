@@ -2,13 +2,13 @@
 
 LeadSpawn helps freelancers and agencies discover potential clients.
 Enter a business niche, city, and country — get back a list of companies
-with contact details, ratings, an AI-generated summary, and CSV export.
+with contact details, ready to browse, filter, and export as CSV.
 
 ## Tech stack
 
-- Python 3.12, FastAPI
-- PostgreSQL + SQLAlchemy (planned)
-- Google Places API as the lead data provider (planned)
+**Backend:** Python 3.12, FastAPI, httpx
+**Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, shadcn/ui-style
+components, Framer Motion, react-i18next (EN/RU/DE/ES), sonner
 
 ## Data source
 
@@ -33,6 +33,8 @@ both require a descriptive User-Agent (already set in `app/services/overpass.py`
 
 ## Local development
 
+Backend (from the repo root):
+
 ```powershell
 python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
@@ -40,10 +42,23 @@ copy .env.example .env
 .venv\Scripts\uvicorn app.main:app --reload
 ```
 
-Then open:
-
 - http://127.0.0.1:8000/health — health check
 - http://127.0.0.1:8000/docs — interactive API docs
+
+Frontend (requires Node 20+; pnpm via corepack):
+
+```powershell
+cd frontend
+corepack pnpm install
+corepack pnpm dev
+```
+
+- http://localhost:5173 — the app (dev server proxies `/api` to port 8000)
+
+The frontend supports light/dark themes, four languages (globe menu),
+card/table result views, and CSV export. New export targets (e.g. Google
+Sheets) register in `frontend/src/lib/export.ts`; new languages are one
+JSON file in `frontend/src/i18n/locales/` plus one entry in `LANGUAGES`.
 
 ## API
 

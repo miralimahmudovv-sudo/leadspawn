@@ -1,0 +1,75 @@
+{
+  "hero": {
+    "badge": "Impulsado por OpenStreetMap",
+    "title": "Encuentra leads de negocios locales en segundos",
+    "subtitle": "Busca cualquier nicho en cualquier ciudad: nombres, teléfonos, webs y direcciones — listos para exportar."
+  },
+  "form": {
+    "businessType": "Tipo de negocio",
+    "businessTypePlaceholder": "p. ej. dentista, panadería…",
+    "country": "País",
+    "countryPlaceholder": "p. ej. Alemania",
+    "city": "Ciudad",
+    "cityPlaceholder": "p. ej. Berlín",
+    "hasWebsite": "¿Tiene web?",
+    "leadCount": "Número de leads",
+    "generate": "Generar leads",
+    "searching": "Buscando…"
+  },
+  "loading": {
+    "locating": "Localizando {{city}} en el mapa…",
+    "scanning": "Explorando la zona en busca de negocios…",
+    "collecting": "Recopilando datos de contacto…",
+    "finalizing": "Puliendo tu lista de leads…"
+  },
+  "results": {
+    "title": "Tus leads",
+    "found": "{{count}} lead encontrado",
+    "found_other": "{{count}} leads encontrados",
+    "discovering": "Descubriendo negocios…",
+    "table": "Tabla",
+    "cards": "Tarjetas",
+    "export": "Exportar",
+    "exportCsv": "Descargar CSV",
+    "exported": "Lista de leads exportada",
+    "idleTitle": "Tus leads aparecerán aquí",
+    "idleSubtitle": "Completa el formulario y pulsa Generar leads.",
+    "emptyTitle": "No se encontraron negocios",
+    "emptySubtitle": "Prueba un nicho más amplio o una ciudad más grande.",
+    "errorTitle": "Algo salió mal",
+    "retry": "Reintentar",
+    "searchDone": "Se encontraron {{count}} leads en {{city}}"
+  },
+  "lead": {
+    "name": "Nombre",
+    "website": "Web",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "rating": "Valoración",
+    "coordinates": "Coordenadas",
+    "actions": "Acciones",
+    "openWebsite": "Abrir web",
+    "openMaps": "Abrir en Maps",
+    "copyPhone": "Copiar teléfono",
+    "copyAddress": "Copiar dirección",
+    "phoneCopied": "Teléfono copiado",
+    "addressCopied": "Dirección copiada",
+    "noValue": "—"
+  },
+  "errors": {
+    "network": "No se pudo conectar con el servidor. ¿Está la API en marcha?",
+    "locationNotFound": "No encontramos esa ciudad. Revisa la ortografía y el país.",
+    "invalidInput": "Revisa los campos del formulario e inténtalo de nuevo.",
+    "providerUnavailable": "La fuente de datos está ocupada. Inténtalo de nuevo en un momento."
+  },
+  "theme": {
+    "toggle": "Cambiar tema"
+  },
+  "language": {
+    "select": "Cambiar idioma"
+  },
+  "footer": {
+    "tagline": "Leads de negocios locales para freelancers y agencias.",
+    "attribution": "Datos © colaboradores de OpenStreetMap"
+  }
+}

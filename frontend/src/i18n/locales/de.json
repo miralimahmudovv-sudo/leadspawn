@@ -1,0 +1,75 @@
+{
+  "hero": {
+    "badge": "Basiert auf OpenStreetMap",
+    "title": "Lokale Business-Leads in Sekunden finden",
+    "subtitle": "Durchsuche jede Nische in jeder Stadt: Namen, Telefonnummern, Websites und Adressen — bereit zum Export."
+  },
+  "form": {
+    "businessType": "Branche",
+    "businessTypePlaceholder": "z. B. Zahnarzt, Bäckerei…",
+    "country": "Land",
+    "countryPlaceholder": "z. B. Deutschland",
+    "city": "Stadt",
+    "cityPlaceholder": "z. B. Berlin",
+    "hasWebsite": "Hat Website?",
+    "leadCount": "Anzahl der Leads",
+    "generate": "Leads generieren",
+    "searching": "Suche läuft…"
+  },
+  "loading": {
+    "locating": "{{city}} wird auf der Karte gesucht…",
+    "scanning": "Umgebung wird nach Unternehmen durchsucht…",
+    "collecting": "Kontaktdaten werden gesammelt…",
+    "finalizing": "Lead-Liste wird aufbereitet…"
+  },
+  "results": {
+    "title": "Deine Leads",
+    "found": "{{count}} Lead gefunden",
+    "found_other": "{{count}} Leads gefunden",
+    "discovering": "Unternehmen werden entdeckt…",
+    "table": "Tabelle",
+    "cards": "Karten",
+    "export": "Export",
+    "exportCsv": "CSV herunterladen",
+    "exported": "Lead-Liste exportiert",
+    "idleTitle": "Deine Leads erscheinen hier",
+    "idleSubtitle": "Fülle das Formular aus und klicke auf „Leads generieren“.",
+    "emptyTitle": "Keine Unternehmen gefunden",
+    "emptySubtitle": "Versuche eine breitere Branche oder eine größere Stadt.",
+    "errorTitle": "Etwas ist schiefgelaufen",
+    "retry": "Erneut versuchen",
+    "searchDone": "{{count}} Leads in {{city}} gefunden"
+  },
+  "lead": {
+    "name": "Name",
+    "website": "Website",
+    "phone": "Telefon",
+    "address": "Adresse",
+    "rating": "Bewertung",
+    "coordinates": "Koordinaten",
+    "actions": "Aktionen",
+    "openWebsite": "Website öffnen",
+    "openMaps": "In Maps öffnen",
+    "copyPhone": "Telefon kopieren",
+    "copyAddress": "Adresse kopieren",
+    "phoneCopied": "Telefonnummer kopiert",
+    "addressCopied": "Adresse kopiert",
+    "noValue": "—"
+  },
+  "errors": {
+    "network": "Server nicht erreichbar. Läuft die API?",
+    "locationNotFound": "Stadt nicht gefunden. Prüfe Schreibweise und Land.",
+    "invalidInput": "Bitte prüfe die Formularfelder und versuche es erneut.",
+    "providerUnavailable": "Die Datenquelle ist gerade ausgelastet. Bitte versuche es gleich noch einmal."
+  },
+  "theme": {
+    "toggle": "Design wechseln"
+  },
+  "language": {
+    "select": "Sprache ändern"
+  },
+  "footer": {
+    "tagline": "Lokale Business-Leads für Freelancer und Agenturen.",
+    "attribution": "Daten © OpenStreetMap-Mitwirkende"
+  }
+}
