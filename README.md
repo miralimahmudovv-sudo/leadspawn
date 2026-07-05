@@ -14,8 +14,13 @@ with contact details, ratings, an AI-generated summary, and CSV export.
 
 The MVP uses **OpenStreetMap** — free, no API key required:
 
-- **Nominatim** geocodes the city/country to a search area.
-- **Overpass API** finds businesses inside that area.
+- **Nominatim** geocodes the city/country to a bounding box.
+- **Overpass API** finds businesses inside it.
+
+Common business terms (dentist, bakery, lawyer, hotel, gym, car repair, …) are
+translated to exact OSM tags via `app/services/osm_tags.py` for fast, precise
+results; unmapped queries fall back to a generic tag-value match. To improve
+coverage for a new niche, add an entry to `TAG_MAPPINGS`.
 
 Trade-off: OSM is community-maintained, so phone/website coverage varies by city
 and there are no ratings. The code is structured so switching to Google Places
@@ -49,9 +54,13 @@ Then open:
   "query": "dentist",
   "city": "Berlin",
   "country": "Germany",
-  "limit": 20
+  "limit": 20,
+  "has_website": false,
+  "has_phone": false
 }
 ```
 
-`limit` accepts 1–50 (default 20). Returns businesses with name, address,
-website and phone (when available in OpenStreetMap), and coordinates.
+`limit` accepts 1–50 (default 20). `has_website` / `has_phone` are optional and,
+when true, only return businesses that have that contact field. Results are
+deduplicated, always named, and include address, website, phone (when available
+in OpenStreetMap), and coordinates.

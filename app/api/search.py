@@ -19,6 +19,8 @@ async def search(request: SearchRequest) -> SearchResponse:
             city=request.city,
             country=request.country,
             limit=request.limit,
+            has_website=request.has_website,
+            has_phone=request.has_phone,
         )
     except LocationNotFoundError as exc:
         raise HTTPException(

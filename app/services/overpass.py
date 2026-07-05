@@ -6,6 +6,7 @@ import httpx
 
 from app.schemas.search import Business
 from app.services.exceptions import LeadProviderError, LocationNotFoundError
+from app.services.osm_tags import tags_for_query
 
 logger = logging.getLogger(__name__)
 
@@ -17,18 +18,20 @@ OVERPASS_URLS = (
     "https://overpass.kumi.systems/api/interpreter",
 )
 USER_AGENT = "LeadSpawn/0.1 (miralimahmudovv@gmail.com)"
-# Area queries on large cities regularly take 15-30s on public instances.
 REQUEST_TIMEOUT = httpx.Timeout(45.0, connect=10.0)
 OVERPASS_QUERY_TIMEOUT_SECONDS = 30
 
-# OSM area ids are derived from the element id plus a type-specific offset.
-RELATION_AREA_OFFSET = 3_600_000_000
-WAY_AREA_OFFSET = 2_400_000_000
-
-# Tag keys that describe what kind of business an OSM element is.
+# Fallback tag keys regex-matched when the query has no exact tag mapping.
 # Matching against business names was tried and removed: regex-scanning every
 # named element in a large city routinely exceeds public-server time limits.
 BUSINESS_TAG_KEYS = ("amenity", "shop", "craft", "office", "healthcare", "cuisine")
+
+# Filters and deduplication discard results, so fetch more than requested.
+FETCH_MULTIPLIER = 3
+MAX_FETCH = 150
+
+# Coordinates rounded to ~100m for deduplication of node/way twins.
+DEDUP_COORD_PRECISION = 3
 
 # The query is interpolated into an Overpass QL regex; anything outside this
 # set could change the meaning of the generated query.
@@ -36,7 +39,12 @@ SAFE_QUERY_PATTERN = re.compile(r"[\w\s\-&'.]+", re.UNICODE)
 
 
 async def search_businesses(
-    query: str, city: str, country: str, limit: int
+    query: str,
+    city: str,
+    country: str,
+    limit: int,
+    has_website: bool = False,
+    has_phone: bool = False,
 ) -> list[Business]:
     if not SAFE_QUERY_PATTERN.fullmatch(query):
         raise LeadProviderError("Query contains unsupported characters")
@@ -45,12 +53,20 @@ async def search_businesses(
         timeout=REQUEST_TIMEOUT, headers={"User-Agent": USER_AGENT}
     ) as client:
         place = await _geocode(client, city, country)
-        prologue, area_suffix = _area_filter_from(place)
-        elements = await _query_overpass(client, query, prologue, area_suffix, limit)
+        bbox = _bbox_from(place)
+        # Filters discard many results (phone/website coverage in OSM is
+        # sparse), so fetch as much as allowed when any filter is active.
+        if has_website or has_phone:
+            fetch_limit = MAX_FETCH
+        else:
+            fetch_limit = min(limit * FETCH_MULTIPLIER, MAX_FETCH)
+        overpass_query = _build_overpass_query(query, bbox, fetch_limit)
+        elements = await _query_overpass(client, overpass_query)
 
-    businesses = [_parse_element(element) for element in elements[:limit]]
+    businesses = _to_businesses(elements, limit, has_website, has_phone)
     logger.info(
-        "Overpass returned %d businesses for query=%r in %r, %r",
+        "Overpass: %d elements -> %d businesses for query=%r in %r, %r",
+        len(elements),
         len(businesses),
         query,
         city,
@@ -79,40 +95,38 @@ async def _geocode(client: httpx.AsyncClient, city: str, country: str) -> dict[s
     return results[0]
 
 
-def _area_filter_from(place: dict[str, Any]) -> tuple[str, str]:
-    osm_type = place.get("osm_type")
-    osm_id = place.get("osm_id")
-
-    if osm_type == "relation":
-        return f"area(id:{RELATION_AREA_OFFSET + osm_id})->.searchArea;", "(area.searchArea)"
-    if osm_type == "way":
-        return f"area(id:{WAY_AREA_OFFSET + osm_id})->.searchArea;", "(area.searchArea)"
-
-    # Nodes (small towns, villages) have no boundary; fall back to the
-    # bounding box Nominatim provides: [south, north, west, east].
+def _bbox_from(place: dict[str, Any]) -> str:
+    # Bounding-box filters hit the Overpass spatial index directly and are
+    # far faster than administrative-area filters, which time out for large
+    # cities under load. Nominatim returns [south, north, west, east].
     south, north, west, east = place["boundingbox"]
-    return "", f"({south},{west},{north},{east})"
+    return f"({south},{west},{north},{east})"
 
 
-def _build_overpass_query(
-    query: str, prologue: str, area_suffix: str, limit: int
-) -> str:
-    clauses = [
-        f'nwr["{key}"~"{query}",i]["name"]{area_suffix};' for key in BUSINESS_TAG_KEYS
-    ]
+def _build_overpass_query(query: str, bbox: str, fetch_limit: int) -> str:
+    tag_pairs = tags_for_query(query)
+    if tag_pairs:
+        clauses = [
+            f'nwr["{key}"="{value}"]["name"]{bbox};' for key, value in tag_pairs
+        ]
+        logger.info("Query %r mapped to OSM tags: %s", query, tag_pairs)
+    else:
+        clauses = [
+            f'nwr["{key}"~"{query}",i]["name"]{bbox};' for key in BUSINESS_TAG_KEYS
+        ]
+        logger.info("Query %r has no tag mapping, using generic tag-value match", query)
+
     body = "\n".join(clauses)
     return (
         f"[out:json][timeout:{OVERPASS_QUERY_TIMEOUT_SECONDS}];\n"
-        f"{prologue}\n"
         f"(\n{body}\n);\n"
-        f"out center {limit};"
+        f"out center {fetch_limit};"
     )
 
 
 async def _query_overpass(
-    client: httpx.AsyncClient, query: str, prologue: str, area_suffix: str, limit: int
+    client: httpx.AsyncClient, overpass_query: str
 ) -> list[dict[str, Any]]:
-    overpass_query = _build_overpass_query(query, prologue, area_suffix, limit)
     last_error: LeadProviderError | None = None
 
     for url in OVERPASS_URLS:
@@ -154,23 +168,79 @@ async def _post_to_instance(
     return elements
 
 
-def _parse_element(element: dict[str, Any]) -> Business:
+def _to_businesses(
+    elements: list[dict[str, Any]], limit: int, has_website: bool, has_phone: bool
+) -> list[Business]:
+    businesses: list[Business] = []
+    seen: set[tuple[str, float | None, float | None]] = set()
+
+    for element in elements:
+        business = _parse_element(element)
+        if business is None:
+            continue
+        if has_website and not business.website:
+            continue
+        if has_phone and not business.phone:
+            continue
+
+        dedup_key = (
+            business.name.lower(),
+            _rounded(business.latitude),
+            _rounded(business.longitude),
+        )
+        if dedup_key in seen:
+            continue
+        seen.add(dedup_key)
+
+        businesses.append(business)
+        if len(businesses) >= limit:
+            break
+
+    return businesses
+
+
+def _parse_element(element: dict[str, Any]) -> Business | None:
     tags = element.get("tags", {})
+    name = _clean(tags.get("name"))
+    if not name:
+        return None
+
     center = element.get("center", {})
     return Business(
-        name=tags.get("name", "Unknown"),
-        website=tags.get("website") or tags.get("contact:website"),
-        phone=tags.get("phone") or tags.get("contact:phone"),
+        name=name,
+        website=_normalize_url(_clean(tags.get("website") or tags.get("contact:website"))),
+        phone=_clean(tags.get("phone") or tags.get("contact:phone")),
         address=_format_address(tags),
         latitude=element.get("lat") or center.get("lat"),
         longitude=element.get("lon") or center.get("lon"),
     )
 
 
+def _clean(value: Any) -> str | None:
+    if not isinstance(value, str):
+        return None
+    stripped = value.strip()
+    return stripped or None
+
+
+def _normalize_url(url: str | None) -> str | None:
+    if url is None:
+        return None
+    if not url.startswith(("http://", "https://")):
+        return f"https://{url}"
+    return url
+
+
+def _rounded(coordinate: float | None) -> float | None:
+    if coordinate is None:
+        return None
+    return round(coordinate, DEDUP_COORD_PRECISION)
+
+
 def _format_address(tags: dict[str, Any]) -> str | None:
-    street = tags.get("addr:street")
-    house_number = tags.get("addr:housenumber")
+    street = _clean(tags.get("addr:street"))
+    house_number = _clean(tags.get("addr:housenumber"))
     street_line = f"{street} {house_number}" if street and house_number else street
-    parts = [street_line, tags.get("addr:postcode"), tags.get("addr:city")]
+    parts = [street_line, _clean(tags.get("addr:postcode")), _clean(tags.get("addr:city"))]
     joined = ", ".join(part for part in parts if part)
     return joined or None

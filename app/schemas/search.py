@@ -26,6 +26,14 @@ class SearchRequest(BaseModel):
         le=50,
         description="Maximum number of businesses to return",
     )
+    has_website: bool = Field(
+        default=False,
+        description="When true, only return businesses that have a website",
+    )
+    has_phone: bool = Field(
+        default=False,
+        description="When true, only return businesses that have a phone number",
+    )
 
 
 class Business(BaseModel):
