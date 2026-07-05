@@ -19,6 +19,7 @@ const CSV_COLUMNS: ReadonlyArray<[header: string, value: (lead: Lead, meta: Expo
     ['Name', (l) => l.name],
     ['Website', (l) => l.website ?? ''],
     ['Phone', (l) => l.phone ?? ''],
+    ['Email', (l) => l.email ?? ''],
     ['Address', (l) => l.address ?? ''],
     ['City', (_, m) => m.city],
     ['Country', (_, m) => m.country],

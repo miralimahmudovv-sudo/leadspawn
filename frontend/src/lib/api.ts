@@ -2,6 +2,7 @@ export interface Lead {
   name: string
   website: string | null
   phone: string | null
+  email: string | null
   address: string | null
   rating: number | null
   user_ratings_total: number | null
@@ -18,6 +19,7 @@ export interface SearchParams {
   limit: number
   has_website: boolean
   has_phone: boolean
+  has_email: boolean
 }
 
 export interface SearchResponse {

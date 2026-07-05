@@ -41,6 +41,7 @@ export function SearchForm({ busy, onSearch }: SearchFormProps) {
   const [city, setCity] = useState('')
   const [hasWebsite, setHasWebsite] = useState(false)
   const [hasPhone, setHasPhone] = useState(false)
+  const [hasEmail, setHasEmail] = useState(false)
   const [limit, setLimit] = useState(20)
 
   const isValid =
@@ -56,6 +57,7 @@ export function SearchForm({ busy, onSearch }: SearchFormProps) {
       limit,
       has_website: hasWebsite,
       has_phone: hasPhone,
+      has_email: hasEmail,
     })
     document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -116,6 +118,12 @@ export function SearchForm({ busy, onSearch }: SearchFormProps) {
                 <Switch id="has-phone" checked={hasPhone} onCheckedChange={setHasPhone} />
                 <Label htmlFor="has-phone" className="cursor-pointer">
                   {t('form.hasPhone')}
+                </Label>
+              </div>
+              <div className="flex items-center gap-3">
+                <Switch id="has-email" checked={hasEmail} onCheckedChange={setHasEmail} />
+                <Label htmlFor="has-email" className="cursor-pointer">
+                  {t('form.hasEmail')}
                 </Label>
               </div>
             </div>

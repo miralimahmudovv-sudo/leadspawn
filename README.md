@@ -36,6 +36,14 @@ both require a descriptive User-Agent (already set in `app/services/overpass.py`
 
 ## Database & caching
 
+OpenStreetMap rarely provides emails, so on a cache miss LeadSpawn **enriches**
+each business that has a website: it fetches the homepage (and one
+contact/Impressum page) with bounded concurrency and short timeouts, extracts a
+public contact email, and stores it. This adds time to the *first* search for a
+location; every later search is instant. Note: this fetches public pages without
+a full `robots.txt` check and stores business emails — revisit both for GDPR and
+politeness before going to production. See `app/services/enrich.py`.
+
 Searches are cached in **PostgreSQL**: the full result set for a
 `(query, city, country)` is stored once, and each request applies its
 `limit`/filters on top. A repeat search returns from the database in
@@ -114,12 +122,13 @@ JSON file in `frontend/src/i18n/locales/` plus one entry in `LANGUAGES`.
   "country": "Germany",
   "limit": 20,
   "has_website": false,
-  "has_phone": false
+  "has_phone": false,
+  "has_email": false
 }
 ```
 
-`limit` accepts 1–50 (default 20). `has_website` / `has_phone` are optional and,
-when true, only return businesses that have that contact field. Results are
+`limit` accepts 1–50 (default 20). `has_website` / `has_phone` / `has_email` are
+optional and, when true, only return businesses that have that contact field. Results are
 deduplicated, always named, and include address, website, phone (when available
 in OpenStreetMap), and coordinates. The response includes `cached: true` when
 served from the database rather than freshly fetched.

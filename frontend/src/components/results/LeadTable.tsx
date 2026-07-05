@@ -24,6 +24,7 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
             <TableHead>{t('lead.name')}</TableHead>
             <TableHead>{t('lead.website')}</TableHead>
             <TableHead>{t('lead.phone')}</TableHead>
+            <TableHead>{t('lead.email')}</TableHead>
             <TableHead>{t('lead.address')}</TableHead>
             <TableHead>{t('lead.rating')}</TableHead>
             <TableHead>{t('lead.coordinates')}</TableHead>
@@ -56,6 +57,18 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
               </TableCell>
               <TableCell className="whitespace-nowrap font-mono text-xs">
                 {lead.phone ?? <span className="text-muted-foreground">{t('lead.noValue')}</span>}
+              </TableCell>
+              <TableCell className="max-w-[200px]">
+                {lead.email ? (
+                  <a
+                    href={`mailto:${lead.email}`}
+                    className="block truncate text-primary hover:underline"
+                  >
+                    {lead.email}
+                  </a>
+                ) : (
+                  <span className="text-muted-foreground">{t('lead.noValue')}</span>
+                )}
               </TableCell>
               <TableCell className="max-w-[260px] truncate text-muted-foreground">
                 {lead.address ?? t('lead.noValue')}

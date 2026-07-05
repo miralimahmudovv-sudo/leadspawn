@@ -13,6 +13,7 @@
     "cityPlaceholder": "z. B. Berlin",
     "hasWebsite": "Hat Website?",
     "hasPhone": "Hat Telefon?",
+    "hasEmail": "Hat E-Mail?",
     "leadCount": "Anzahl der Leads",
     "generate": "Leads generieren",
     "searching": "Suche läuft…"
@@ -46,6 +47,7 @@
     "name": "Name",
     "website": "Website",
     "phone": "Telefon",
+    "email": "E-Mail",
     "address": "Adresse",
     "rating": "Bewertung",
     "coordinates": "Koordinaten",
@@ -53,8 +55,10 @@
     "openWebsite": "Website öffnen",
     "openMaps": "In Maps öffnen",
     "copyPhone": "Telefon kopieren",
+    "copyEmail": "E-Mail kopieren",
     "copyAddress": "Adresse kopieren",
     "phoneCopied": "Telefonnummer kopiert",
+    "emailCopied": "E-Mail kopiert",
     "addressCopied": "Adresse kopiert",
     "noValue": "—"
   },

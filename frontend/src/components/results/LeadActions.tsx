@@ -1,4 +1,4 @@
-import { Check, Copy, ExternalLink, MapPin, Phone } from 'lucide-react'
+import { Check, Copy, ExternalLink, Mail, MapPin, Phone } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -6,7 +6,13 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { mapsUrl, type Lead } from '@/lib/api'
 
-type CopiedField = 'phone' | 'address' | null
+type CopiedField = 'phone' | 'email' | 'address' | null
+
+const COPIED_MESSAGE: Record<Exclude<CopiedField, null>, string> = {
+  phone: 'lead.phoneCopied',
+  email: 'lead.emailCopied',
+  address: 'lead.addressCopied',
+}
 
 export function LeadActions({ lead }: { lead: Lead }) {
   const { t } = useTranslation()
@@ -28,7 +34,7 @@ export function LeadActions({ lead }: { lead: Lead }) {
       if (!succeeded) return
     }
     setCopied(field)
-    toast.success(t(field === 'phone' ? 'lead.phoneCopied' : 'lead.addressCopied'))
+    toast.success(t(COPIED_MESSAGE[field]))
     if (resetTimer.current != null) window.clearTimeout(resetTimer.current)
     resetTimer.current = window.setTimeout(() => setCopied(null), 1600)
   }
@@ -63,6 +69,16 @@ export function LeadActions({ lead }: { lead: Lead }) {
         onClick={() => lead.phone && void copyToClipboard('phone', lead.phone)}
       >
         {copied === 'phone' ? <Check className="text-emerald-500" /> : <Phone />}
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label={t('lead.copyEmail')}
+        title={t('lead.copyEmail')}
+        disabled={!lead.email}
+        onClick={() => lead.email && void copyToClipboard('email', lead.email)}
+      >
+        {copied === 'email' ? <Check className="text-emerald-500" /> : <Mail />}
       </Button>
       <Button
         variant="ghost"

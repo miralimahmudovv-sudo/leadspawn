@@ -34,12 +34,17 @@ class SearchRequest(BaseModel):
         default=False,
         description="When true, only return businesses that have a phone number",
     )
+    has_email: bool = Field(
+        default=False,
+        description="When true, only return businesses that have a public email",
+    )
 
 
 class Business(BaseModel):
     name: str
     website: str | None = None
     phone: str | None = None
+    email: str | None = None
     address: str | None = None
     rating: float | None = None
     user_ratings_total: int | None = None

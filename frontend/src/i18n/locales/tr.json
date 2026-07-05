@@ -13,6 +13,7 @@
     "cityPlaceholder": "örn. Berlin",
     "hasWebsite": "Web sitesi var mı?",
     "hasPhone": "Telefon var mı?",
+    "hasEmail": "E-posta var mı?",
     "leadCount": "Müşteri sayısı",
     "generate": "Müşteri Bul",
     "searching": "Aranıyor…"
@@ -46,6 +47,7 @@
     "name": "İsim",
     "website": "Web sitesi",
     "phone": "Telefon",
+    "email": "E-posta",
     "address": "Adres",
     "rating": "Puan",
     "coordinates": "Koordinatlar",
@@ -53,8 +55,10 @@
     "openWebsite": "Web sitesini aç",
     "openMaps": "Haritada aç",
     "copyPhone": "Telefonu kopyala",
+    "copyEmail": "E-postayı kopyala",
     "copyAddress": "Adresi kopyala",
     "phoneCopied": "Telefon numarası kopyalandı",
+    "emailCopied": "E-posta kopyalandı",
     "addressCopied": "Adres kopyalandı",
     "noValue": "—"
   },

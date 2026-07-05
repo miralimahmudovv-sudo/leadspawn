@@ -13,6 +13,7 @@
     "cityPlaceholder": "например: Берлин",
     "hasWebsite": "Есть сайт?",
     "hasPhone": "Есть телефон?",
+    "hasEmail": "Есть e-mail?",
     "leadCount": "Количество лидов",
     "generate": "Найти лидов",
     "searching": "Поиск…"
@@ -48,6 +49,7 @@
     "name": "Название",
     "website": "Сайт",
     "phone": "Телефон",
+    "email": "E-mail",
     "address": "Адрес",
     "rating": "Рейтинг",
     "coordinates": "Координаты",
@@ -55,8 +57,10 @@
     "openWebsite": "Открыть сайт",
     "openMaps": "Открыть на карте",
     "copyPhone": "Копировать телефон",
+    "copyEmail": "Копировать e-mail",
     "copyAddress": "Копировать адрес",
     "phoneCopied": "Телефон скопирован",
+    "emailCopied": "E-mail скопирован",
     "addressCopied": "Адрес скопирован",
     "noValue": "—"
   },

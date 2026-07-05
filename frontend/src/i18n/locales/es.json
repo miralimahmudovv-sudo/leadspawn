@@ -13,6 +13,7 @@
     "cityPlaceholder": "p. ej. Berlín",
     "hasWebsite": "¿Tiene web?",
     "hasPhone": "¿Tiene teléfono?",
+    "hasEmail": "¿Tiene email?",
     "leadCount": "Número de leads",
     "generate": "Generar leads",
     "searching": "Buscando…"
@@ -46,6 +47,7 @@
     "name": "Nombre",
     "website": "Web",
     "phone": "Teléfono",
+    "email": "Email",
     "address": "Dirección",
     "rating": "Valoración",
     "coordinates": "Coordenadas",
@@ -53,8 +55,10 @@
     "openWebsite": "Abrir web",
     "openMaps": "Abrir en Maps",
     "copyPhone": "Copiar teléfono",
+    "copyEmail": "Copiar email",
     "copyAddress": "Copiar dirección",
     "phoneCopied": "Teléfono copiado",
+    "emailCopied": "Email copiado",
     "addressCopied": "Dirección copiada",
     "noValue": "—"
   },

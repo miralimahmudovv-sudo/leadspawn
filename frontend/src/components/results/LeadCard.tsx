@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Globe, MapPin, Phone, Star } from 'lucide-react'
+import { Globe, Mail, MapPin, Phone, Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { LeadActions } from '@/components/results/LeadActions'
@@ -44,6 +44,19 @@ export function LeadCard({ lead }: { lead: Lead }) {
             <p className="flex items-center gap-2">
               <Phone className="size-3.5 shrink-0" />
               <span className="font-mono text-xs">{lead.phone ?? t('lead.noValue')}</span>
+            </p>
+            <p className="flex items-center gap-2">
+              <Mail className="size-3.5 shrink-0" />
+              {lead.email ? (
+                <a
+                  href={`mailto:${lead.email}`}
+                  className="truncate text-primary hover:underline"
+                >
+                  {lead.email}
+                </a>
+              ) : (
+                <span>{t('lead.noValue')}</span>
+              )}
             </p>
             <p className="flex items-center gap-2">
               <Globe className="size-3.5 shrink-0" />

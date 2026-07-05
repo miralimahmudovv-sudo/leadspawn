@@ -38,6 +38,7 @@ class CachedLead(Base):
     name: Mapped[str] = mapped_column(String(255))
     website: Mapped[str | None] = mapped_column(String(500))
     phone: Mapped[str | None] = mapped_column(String(64))
+    email: Mapped[str | None] = mapped_column(String(255))
     address: Mapped[str | None] = mapped_column(String(500))
     rating: Mapped[float | None] = mapped_column(Float)
     user_ratings_total: Mapped[int | None] = mapped_column(Integer)

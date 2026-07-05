@@ -13,6 +13,7 @@
     "cityPlaceholder": "e.g. Berlin",
     "hasWebsite": "Has website?",
     "hasPhone": "Has phone?",
+    "hasEmail": "Has email?",
     "leadCount": "Number of leads",
     "generate": "Generate Leads",
     "searching": "Searching…"
@@ -46,6 +47,7 @@
     "name": "Name",
     "website": "Website",
     "phone": "Phone",
+    "email": "Email",
     "address": "Address",
     "rating": "Rating",
     "coordinates": "Coordinates",
@@ -53,8 +55,10 @@
     "openWebsite": "Open website",
     "openMaps": "Open in Maps",
     "copyPhone": "Copy phone",
+    "copyEmail": "Copy email",
     "copyAddress": "Copy address",
     "phoneCopied": "Phone number copied",
+    "emailCopied": "Email copied",
     "addressCopied": "Address copied",
     "noValue": "—"
   },

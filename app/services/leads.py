@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.models.search import CachedLead, CachedSearch
 from app.schemas.search import Business
-from app.services import overpass
+from app.services import enrich, overpass
 from app.services.filters import apply_filters
 from app.services.osm_tags import normalize_query
 
@@ -30,6 +30,7 @@ async def get_leads(
     limit: int,
     has_website: bool,
     has_phone: bool,
+    has_email: bool,
 ) -> LeadResults:
     key = _CacheKey(
         query=normalize_query(query),
@@ -41,12 +42,17 @@ async def get_leads(
     if cached_row is not None:
         businesses = [_to_business(lead) for lead in cached_row.leads]
         logger.info("Cache hit for %s (%d leads)", key, len(businesses))
-        return LeadResults(apply_filters(businesses, has_website, has_phone, limit), True)
+        return LeadResults(
+            apply_filters(businesses, has_website, has_phone, has_email, limit), True
+        )
 
     logger.info("Cache miss for %s — querying provider", key)
     businesses = await overpass.fetch_businesses(query, city, country)
+    await enrich.enrich_emails(businesses)
     await _store_cache(session, key, businesses)
-    return LeadResults(apply_filters(businesses, has_website, has_phone, limit), False)
+    return LeadResults(
+        apply_filters(businesses, has_website, has_phone, has_email, limit), False
+    )
 
 
 @dataclass(frozen=True)
@@ -104,6 +110,7 @@ def _to_cached_lead(business: Business) -> CachedLead:
         name=business.name,
         website=business.website,
         phone=business.phone,
+        email=business.email,
         address=business.address,
         rating=business.rating,
         user_ratings_total=business.user_ratings_total,
@@ -119,6 +126,7 @@ def _to_business(lead: CachedLead) -> Business:
         name=lead.name,
         website=lead.website,
         phone=lead.phone,
+        email=lead.email,
         address=lead.address,
         rating=lead.rating,
         user_ratings_total=lead.user_ratings_total,
