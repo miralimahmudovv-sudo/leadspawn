@@ -17,6 +17,7 @@ export interface SearchParams {
   country: string
   limit: number
   has_website: boolean
+  has_phone: boolean
 }
 
 export interface SearchResponse {
@@ -24,6 +25,7 @@ export interface SearchResponse {
   city: string
   country: string
   count: number
+  cached: boolean
   results: Lead[]
 }
 

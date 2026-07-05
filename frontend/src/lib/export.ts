@@ -12,18 +12,27 @@ export interface Exporter {
   export: (leads: Lead[], meta: ExportMeta) => void | Promise<void>
 }
 
-const CSV_COLUMNS: ReadonlyArray<[header: string, value: (lead: Lead) => string]> = [
-  ['Name', (l) => l.name],
-  ['Website', (l) => l.website ?? ''],
-  ['Phone', (l) => l.phone ?? ''],
-  ['Address', (l) => l.address ?? ''],
-  ['Rating', (l) => (l.rating != null ? String(l.rating) : '')],
-  ['Latitude', (l) => (l.latitude != null ? String(l.latitude) : '')],
-  ['Longitude', (l) => (l.longitude != null ? String(l.longitude) : '')],
-]
+// Semicolon delimiter + the Excel `sep=` directive so the file opens into
+// columns in Excel regardless of the user's locale (many European locales
+// use ';' as the list separator, which is why a comma file showed as one
+// column). Other tools that ignore `sep=` still parse the semicolons.
+const DELIMITER = ';'
+
+const CSV_COLUMNS: ReadonlyArray<[header: string, value: (lead: Lead, meta: ExportMeta) => string]> =
+  [
+    ['Name', (l) => l.name],
+    ['Website', (l) => l.website ?? ''],
+    ['Phone', (l) => l.phone ?? ''],
+    ['Address', (l) => l.address ?? ''],
+    ['City', (_, m) => m.city],
+    ['Country', (_, m) => m.country],
+    ['Rating', (l) => (l.rating != null ? String(l.rating) : '')],
+    ['Latitude', (l) => (l.latitude != null ? String(l.latitude) : '')],
+    ['Longitude', (l) => (l.longitude != null ? String(l.longitude) : '')],
+  ]
 
 function csvEscape(value: string): string {
-  if (/[",\n\r]/.test(value)) {
+  if (/["\n\r;]/.test(value)) {
     return `"${value.replaceAll('"', '""')}"`
   }
   return value
@@ -37,14 +46,13 @@ const csvExporter: Exporter = {
   id: 'csv',
   labelKey: 'results.exportCsv',
   export: (leads, meta) => {
-    const header = CSV_COLUMNS.map(([name]) => name).join(',')
+    const header = CSV_COLUMNS.map(([name]) => name).join(DELIMITER)
     const rows = leads.map((lead) =>
-      CSV_COLUMNS.map(([, value]) => csvEscape(value(lead))).join(','),
+      CSV_COLUMNS.map(([, value]) => csvEscape(value(lead, meta))).join(DELIMITER),
     )
-    // BOM so Excel opens UTF-8 (accented names, non-Latin addresses) correctly.
-    const blob = new Blob(['﻿' + [header, ...rows].join('\r\n')], {
-      type: 'text/csv;charset=utf-8',
-    })
+    const content = `sep=${DELIMITER}\r\n` + [header, ...rows].join('\r\n')
+    // Leading BOM so Excel reads it as UTF-8 (accents, non-Latin addresses).
+    const blob = new Blob(['﻿' + content], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url

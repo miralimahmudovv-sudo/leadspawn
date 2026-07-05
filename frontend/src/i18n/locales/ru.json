@@ -12,6 +12,7 @@
     "city": "Город",
     "cityPlaceholder": "например: Берлин",
     "hasWebsite": "Есть сайт?",
+    "hasPhone": "Есть телефон?",
     "leadCount": "Количество лидов",
     "generate": "Найти лидов",
     "searching": "Поиск…"
@@ -28,6 +29,7 @@
     "found_few": "Найдено {{count}} лида",
     "found_many": "Найдено {{count}} лидов",
     "found_other": "Найдено {{count}} лида",
+    "cached": "Мгновенно (из кэша)",
     "discovering": "Находим бизнесы…",
     "table": "Таблица",
     "cards": "Карточки",

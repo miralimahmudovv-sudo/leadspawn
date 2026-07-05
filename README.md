@@ -6,7 +6,8 @@ with contact details, ready to browse, filter, and export as CSV.
 
 ## Tech stack
 
-**Backend:** Python 3.12, FastAPI, httpx
+**Backend:** Python 3.12, FastAPI, httpx, SQLAlchemy (async) + asyncpg,
+Alembic, PostgreSQL
 **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, shadcn/ui-style
 components, Framer Motion, react-i18next (EN/RU/DE/ES), sonner
 
@@ -31,6 +32,30 @@ and there are no ratings. The code is structured so switching to Google Places
 Please respect the public servers: Nominatim allows max 1 request/second and
 both require a descriptive User-Agent (already set in `app/services/overpass.py`).
 
+## Database & caching
+
+Searches are cached in **PostgreSQL**: the full result set for a
+`(query, city, country)` is stored once, and each request applies its
+`limit`/filters on top. A repeat search returns from the database in
+milliseconds instead of waiting 5–35 s on the public OSM servers. Cached
+entries expire after `CACHE_TTL_DAYS` (default 30) and are then re-fetched.
+
+One-time setup (PostgreSQL must be installed and running on port 5432):
+
+```powershell
+# Create the database (adjust user if needed)
+& "C:\Program Files\PostgreSQL\17\bin\psql.exe" -U postgres -c "CREATE DATABASE leadspawn"
+```
+
+Set `DATABASE_URL` in `.env` (see `.env.example`), then apply migrations:
+
+```powershell
+.venv\Scripts\alembic upgrade head
+```
+
+Schema changes: edit the models in `app/models/`, then
+`alembic revision --autogenerate -m "…"` and `alembic upgrade head`.
+
 ## Local development
 
 Backend (from the repo root):
@@ -39,6 +64,7 @@ Backend (from the repo root):
 python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 copy .env.example .env
+.venv\Scripts\alembic upgrade head
 .venv\Scripts\uvicorn app.main:app --reload
 ```
 
@@ -78,4 +104,9 @@ JSON file in `frontend/src/i18n/locales/` plus one entry in `LANGUAGES`.
 `limit` accepts 1–50 (default 20). `has_website` / `has_phone` are optional and,
 when true, only return businesses that have that contact field. Results are
 deduplicated, always named, and include address, website, phone (when available
-in OpenStreetMap), and coordinates.
+in OpenStreetMap), and coordinates. The response includes `cached: true` when
+served from the database rather than freshly fetched.
+
+CSV export uses a `;` delimiter with an Excel `sep=;` hint so the file opens
+into columns in Excel across locales (a plain comma file appears as a single
+column in locales that use `;` as the list separator).

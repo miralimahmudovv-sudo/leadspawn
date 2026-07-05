@@ -11,6 +11,7 @@ export interface LeadSearchState {
   status: SearchStatus
   leads: Lead[]
   total: number
+  cached: boolean
   errorKey: string | null
   meta: ExportMeta | null
 }
@@ -19,6 +20,7 @@ const INITIAL_STATE: LeadSearchState = {
   status: 'idle',
   leads: [],
   total: 0,
+  cached: false,
   errorKey: null,
   meta: null,
 }
@@ -63,25 +65,28 @@ export function useLeadSearch() {
         city: params.city,
         country: params.country,
       }
-      setState({ status: 'searching', leads: [], total: 0, errorKey: null, meta })
+      setState({ status: 'searching', leads: [], total: 0, cached: false, errorKey: null, meta })
 
       let results: Lead[]
+      let cached: boolean
       try {
-        results = (await searchLeads(params, controller.signal)).results
+        const response = await searchLeads(params, controller.signal)
+        results = response.results
+        cached = response.cached
       } catch (error) {
         if (controller.signal.aborted) return
         const errorKey = error instanceof ApiError ? error.messageKey : 'errors.network'
-        setState({ status: 'error', leads: [], total: 0, errorKey, meta })
+        setState({ status: 'error', leads: [], total: 0, cached: false, errorKey, meta })
         return
       }
       if (controller.signal.aborted) return
 
       if (results.length === 0) {
-        setState({ status: 'done', leads: [], total: 0, errorKey: null, meta })
+        setState({ status: 'done', leads: [], total: 0, cached, errorKey: null, meta })
         return
       }
 
-      setState({ status: 'revealing', leads: [], total: results.length, errorKey: null, meta })
+      setState({ status: 'revealing', leads: [], total: results.length, cached, errorKey: null, meta })
       const delay = Math.max(
         MIN_REVEAL_DELAY_MS,
         Math.min(MAX_REVEAL_DELAY_MS, TARGET_REVEAL_TOTAL_MS / results.length),

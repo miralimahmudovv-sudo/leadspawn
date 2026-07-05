@@ -12,6 +12,7 @@
     "city": "Stadt",
     "cityPlaceholder": "z. B. Berlin",
     "hasWebsite": "Hat Website?",
+    "hasPhone": "Hat Telefon?",
     "leadCount": "Anzahl der Leads",
     "generate": "Leads generieren",
     "searching": "Suche läuft…"
@@ -26,6 +27,7 @@
     "title": "Deine Leads",
     "found": "{{count}} Lead gefunden",
     "found_other": "{{count}} Leads gefunden",
+    "cached": "Sofort (aus Cache)",
     "discovering": "Unternehmen werden entdeckt…",
     "table": "Tabelle",
     "cards": "Karten",

@@ -40,6 +40,7 @@ export function SearchForm({ busy, onSearch }: SearchFormProps) {
   const [country, setCountry] = useState('')
   const [city, setCity] = useState('')
   const [hasWebsite, setHasWebsite] = useState(false)
+  const [hasPhone, setHasPhone] = useState(false)
   const [limit, setLimit] = useState(20)
 
   const isValid =
@@ -54,6 +55,7 @@ export function SearchForm({ busy, onSearch }: SearchFormProps) {
       city: city.trim(),
       limit,
       has_website: hasWebsite,
+      has_phone: hasPhone,
     })
     document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -103,11 +105,19 @@ export function SearchForm({ busy, onSearch }: SearchFormProps) {
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <Switch id="has-website" checked={hasWebsite} onCheckedChange={setHasWebsite} />
-              <Label htmlFor="has-website" className="cursor-pointer">
-                {t('form.hasWebsite')}
-              </Label>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+              <div className="flex items-center gap-3">
+                <Switch id="has-website" checked={hasWebsite} onCheckedChange={setHasWebsite} />
+                <Label htmlFor="has-website" className="cursor-pointer">
+                  {t('form.hasWebsite')}
+                </Label>
+              </div>
+              <div className="flex items-center gap-3">
+                <Switch id="has-phone" checked={hasPhone} onCheckedChange={setHasPhone} />
+                <Label htmlFor="has-phone" className="cursor-pointer">
+                  {t('form.hasPhone')}
+                </Label>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <Label className="text-muted-foreground">{t('form.leadCount')}</Label>

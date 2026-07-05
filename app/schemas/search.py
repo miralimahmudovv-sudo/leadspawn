@@ -54,4 +54,5 @@ class SearchResponse(BaseModel):
     city: str
     country: str
     count: int
+    cached: bool = False
     results: list[Business]

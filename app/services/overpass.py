@@ -26,8 +26,8 @@ OVERPASS_QUERY_TIMEOUT_SECONDS = 30
 # named element in a large city routinely exceeds public-server time limits.
 BUSINESS_TAG_KEYS = ("amenity", "shop", "craft", "office", "healthcare", "cuisine")
 
-# Filters and deduplication discard results, so fetch more than requested.
-FETCH_MULTIPLIER = 3
+# We always fetch a generous set so one cached result can serve many different
+# limit/filter combinations without re-hitting the public Overpass servers.
 MAX_FETCH = 150
 
 # Coordinates rounded to ~100m for deduplication of node/way twins.
@@ -38,14 +38,12 @@ DEDUP_COORD_PRECISION = 3
 SAFE_QUERY_PATTERN = re.compile(r"[\w\s\-&'.]+", re.UNICODE)
 
 
-async def search_businesses(
-    query: str,
-    city: str,
-    country: str,
-    limit: int,
-    has_website: bool = False,
-    has_phone: bool = False,
-) -> list[Business]:
+async def fetch_businesses(query: str, city: str, country: str) -> list[Business]:
+    """Fetch the full deduplicated business set for a location.
+
+    Returns everything (up to MAX_FETCH), unfiltered and unlimited, so the
+    caller can cache it once and apply per-request limit/filters on top.
+    """
     if not SAFE_QUERY_PATTERN.fullmatch(query):
         raise LeadProviderError("Query contains unsupported characters")
 
@@ -54,16 +52,10 @@ async def search_businesses(
     ) as client:
         place = await _geocode(client, city, country)
         bbox = _bbox_from(place)
-        # Filters discard many results (phone/website coverage in OSM is
-        # sparse), so fetch as much as allowed when any filter is active.
-        if has_website or has_phone:
-            fetch_limit = MAX_FETCH
-        else:
-            fetch_limit = min(limit * FETCH_MULTIPLIER, MAX_FETCH)
-        overpass_query = _build_overpass_query(query, bbox, fetch_limit)
+        overpass_query = _build_overpass_query(query, bbox, MAX_FETCH)
         elements = await _query_overpass(client, overpass_query)
 
-    businesses = _to_businesses(elements, limit, has_website, has_phone)
+    businesses = _parse_and_dedup(elements)
     logger.info(
         "Overpass: %d elements -> %d businesses for query=%r in %r, %r",
         len(elements),
@@ -168,19 +160,13 @@ async def _post_to_instance(
     return elements
 
 
-def _to_businesses(
-    elements: list[dict[str, Any]], limit: int, has_website: bool, has_phone: bool
-) -> list[Business]:
+def _parse_and_dedup(elements: list[dict[str, Any]]) -> list[Business]:
     businesses: list[Business] = []
     seen: set[tuple[str, float | None, float | None]] = set()
 
     for element in elements:
         business = _parse_element(element)
         if business is None:
-            continue
-        if has_website and not business.website:
-            continue
-        if has_phone and not business.phone:
             continue
 
         dedup_key = (
@@ -191,10 +177,7 @@ def _to_businesses(
         if dedup_key in seen:
             continue
         seen.add(dedup_key)
-
         businesses.append(business)
-        if len(businesses) >= limit:
-            break
 
     return businesses
 

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Download, LayoutGrid, TableProperties } from 'lucide-react'
+import { Download, LayoutGrid, TableProperties, Zap } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -35,7 +35,7 @@ export function ResultsSection({ state, onRetry }: ResultsSectionProps) {
   const { t } = useTranslation()
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
 
-  const { status, leads, meta, errorKey } = state
+  const { status, leads, cached, meta, errorKey } = state
   const canExport = status === 'done' && leads.length > 0 && meta != null
 
   const handleExport = async (exporterId: string) => {
@@ -58,6 +58,16 @@ export function ResultsSection({ state, onRetry }: ResultsSectionProps) {
               className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
             >
               {t('results.found', { count: leads.length })}
+            </motion.span>
+          )}
+          {status === 'done' && cached && leads.length > 0 && (
+            <motion.span
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400"
+            >
+              <Zap className="size-3 fill-current" />
+              {t('results.cached')}
             </motion.span>
           )}
           <AnimatePresence>{status === 'revealing' && <DiscoveringIndicator />}</AnimatePresence>
