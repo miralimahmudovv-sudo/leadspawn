@@ -3,7 +3,9 @@ from typing import Any
 
 import httpx
 
+from app.core.config import get_settings
 from app.schemas.search import Business
+from app.services.exceptions import LeadProviderError
 
 logger = logging.getLogger(__name__)
 
@@ -27,18 +29,18 @@ FIELD_MASK = ",".join(
 )
 
 
-class GooglePlacesError(Exception):
-    """Raised when a Google Places API request fails."""
-
-
 async def search_businesses(
-    api_key: str, query: str, location: str, limit: int
+    query: str, city: str, country: str, limit: int
 ) -> list[Business]:
+    api_key = get_settings().google_places_api_key
+    if not api_key:
+        raise LeadProviderError("GOOGLE_PLACES_API_KEY is not configured")
+
     headers = {
         "X-Goog-Api-Key": api_key,
         "X-Goog-FieldMask": FIELD_MASK,
     }
-    text_query = f"{query} in {location}"
+    text_query = f"{query} in {city}, {country}"
     businesses: list[Business] = []
     page_token: str | None = None
 
@@ -75,7 +77,7 @@ async def _post_search(
         response = await client.post(TEXT_SEARCH_URL, json=payload, headers=headers)
     except httpx.RequestError as exc:
         logger.error("Google Places request failed: %s", exc)
-        raise GooglePlacesError("Could not reach the Google Places API") from exc
+        raise LeadProviderError("Could not reach the Google Places API") from exc
 
     if response.status_code != 200:
         logger.error(
@@ -83,7 +85,7 @@ async def _post_search(
             response.status_code,
             response.text[:500],
         )
-        raise GooglePlacesError(
+        raise LeadProviderError(
             f"Google Places API request failed with status {response.status_code}"
         )
 

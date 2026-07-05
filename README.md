@@ -10,21 +10,21 @@ with contact details, ratings, an AI-generated summary, and CSV export.
 - PostgreSQL + SQLAlchemy (planned)
 - Google Places API as the lead data provider (planned)
 
-## Google Places API setup
+## Data source
 
-The search endpoint uses the **Places API (New)**. To get a key:
+The MVP uses **OpenStreetMap** — free, no API key required:
 
-1. Go to https://console.cloud.google.com/ and create a project (e.g. `leadspawn`).
-2. Enable billing for the project (required by Google, includes a monthly free usage tier).
-3. In **APIs & Services → Library**, search for **Places API (New)** and enable it.
-   Make sure it is the "(New)" one — the legacy Places API uses different endpoints.
-4. In **APIs & Services → Credentials**, create an **API key**.
-5. Restrict the key (recommended): under *API restrictions*, allow only **Places API (New)**.
-6. Put the key in your `.env` file as `GOOGLE_PLACES_API_KEY`.
+- **Nominatim** geocodes the city/country to a search area.
+- **Overpass API** finds businesses inside that area.
 
-Note on cost: requests that return phone numbers and websites bill under Google's
-higher Text Search SKU tier. Fine for development volumes; check current pricing
-at https://mapsplatform.google.com/pricing/ before launching.
+Trade-off: OSM is community-maintained, so phone/website coverage varies by city
+and there are no ratings. The code is structured so switching to Google Places
+(better data, paid) later only requires swapping the provider module in
+`app/api/search.py` — a ready client already exists in
+`app/services/google_places.py` (needs `GOOGLE_PLACES_API_KEY` in `.env`).
+
+Please respect the public servers: Nominatim allows max 1 request/second and
+both require a descriptive User-Agent (already set in `app/services/overpass.py`).
 
 ## Local development
 
@@ -47,10 +47,11 @@ Then open:
 ```json
 {
   "query": "dentist",
-  "location": "Berlin, Germany",
+  "city": "Berlin",
+  "country": "Germany",
   "limit": 20
 }
 ```
 
-`limit` accepts 1–50 (default 20). Returns businesses with name, website, phone,
-address, rating, review count, business status, Google Maps URL, and coordinates.
+`limit` accepts 1–50 (default 20). Returns businesses with name, address,
+website and phone (when available in OpenStreetMap), and coordinates.

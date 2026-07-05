@@ -6,13 +6,19 @@ class SearchRequest(BaseModel):
 
     query: str = Field(
         min_length=2,
-        max_length=100,
+        max_length=80,
+        pattern=r"^[\w\s\-&'.]+$",
         description="Business niche to search for, e.g. 'dentist'",
     )
-    location: str = Field(
+    city: str = Field(
         min_length=2,
-        max_length=100,
-        description="City and country, e.g. 'Berlin, Germany'",
+        max_length=80,
+        description="City name, e.g. 'Berlin'",
+    )
+    country: str = Field(
+        min_length=2,
+        max_length=80,
+        description="Country name, e.g. 'Germany'",
     )
     limit: int = Field(
         default=20,
@@ -37,6 +43,7 @@ class Business(BaseModel):
 
 class SearchResponse(BaseModel):
     query: str
-    location: str
+    city: str
+    country: str
     count: int
     results: list[Business]
