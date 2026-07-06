@@ -25,6 +25,13 @@ translated to exact OSM tags via `app/services/osm_tags.py` for fast, precise
 results; unmapped queries fall back to a generic tag-value match. To improve
 coverage for a new niche, add an entry to `TAG_MAPPINGS`.
 
+**Multilingual search:** queries also work in German, Russian, Spanish and
+Turkish. `CONCEPT_ALIASES` maps localized terms (`zahnarzt`, `стоматолог`,
+`dentista`, `diş hekimi`) onto the same canonical English concept and its OSM
+tags. City/country names can be entered in any language — Nominatim resolves
+localized place names (`München, Deutschland`, `Москва, Россия`). Add a language
+by extending the alias tuples.
+
 Trade-off: OSM is community-maintained, so phone/website coverage varies by city
 and there are no ratings. The code is structured so switching to Google Places
 (better data, paid) later only requires swapping the provider module in
