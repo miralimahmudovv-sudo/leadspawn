@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,6 +16,15 @@ class Settings(BaseSettings):
         "postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/leadspawn"
     )
     cache_ttl_days: int = 30
+
+    @field_validator("database_url")
+    @classmethod
+    def _use_asyncpg_driver(cls, value: str) -> str:
+        if value.startswith("postgres://"):
+            value = "postgresql://" + value.removeprefix("postgres://")
+        if value.startswith("postgresql://"):
+            value = "postgresql+asyncpg://" + value.removeprefix("postgresql://")
+        return value
 
 
 @lru_cache
