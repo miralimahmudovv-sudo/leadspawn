@@ -88,6 +88,21 @@ docker compose up --build
 The `api` container runs `alembic upgrade head` on startup, so the schema is
 created automatically. Postgres data persists in the `pgdata` volume.
 
+## Tests
+
+Backend tests (pytest + respx for HTTP mocking; cache tests need a local
+`leadspawn_test` database):
+
+```powershell
+& "C:\Program Files\PostgreSQL\17\bin\psql.exe" -U postgres -c "CREATE DATABASE leadspawn_test"
+.venv\Scripts\pip install -r requirements-dev.txt
+.venv\Scripts\python -m pytest --cov=app
+```
+
+CI (`.github/workflows/ci.yml`) runs the backend suite against a Postgres
+service container plus the frontend type-check and production build on every
+push and pull request.
+
 ## Local development
 
 Backend (from the repo root):
