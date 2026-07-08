@@ -3,6 +3,9 @@
 .venv/
 venv/
 
+# Built frontend copied for local full-stack testing
+/static/
+
 # Python artifacts
 __pycache__/
 *.py[cod]

@@ -14,7 +14,7 @@ services:
       timeout: 5s
       retries: 10
 
-  api:
+  app:
     build: .
     restart: unless-stopped
     environment:
@@ -25,14 +25,6 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
-
-  web:
-    build: ./frontend
-    restart: unless-stopped
-    depends_on:
-      - api
-    ports:
-      - "8080:80"
 
 volumes:
   pgdata:

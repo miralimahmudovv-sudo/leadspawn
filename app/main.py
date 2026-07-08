@@ -1,14 +1,18 @@
 import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.api.search import router as search_router
 from app.core.config import get_settings
 from app.db.session import engine
+
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -42,3 +46,7 @@ class HealthResponse(BaseModel):
 @app.get("/health", response_model=HealthResponse)
 def health_check() -> HealthResponse:
     return HealthResponse(status="ok", environment=settings.environment)
+
+
+if STATIC_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="frontend")

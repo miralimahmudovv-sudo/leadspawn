@@ -1,3 +1,17 @@
+FROM node:22-alpine AS frontend
+
+WORKDIR /build
+
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable
+
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY frontend/ .
+RUN pnpm build
+
+
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -12,6 +26,7 @@ RUN pip install -r requirements.txt
 COPY alembic.ini ./
 COPY alembic ./alembic
 COPY app ./app
+COPY --from=frontend /build/dist ./static
 
 EXPOSE 8000
 
