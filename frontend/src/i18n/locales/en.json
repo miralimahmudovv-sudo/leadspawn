@@ -66,7 +66,8 @@
     "network": "Could not reach the server. Is the API running?",
     "locationNotFound": "We couldn't find that city. Check the spelling and country.",
     "invalidInput": "Please check the form fields and try again.",
-    "providerUnavailable": "The data provider is busy right now. Please try again in a moment."
+    "providerUnavailable": "The data provider is busy right now. Please try again in a moment.",
+    "retrying": "The data source is busy — retrying automatically…"
   },
   "theme": {
     "toggle": "Toggle theme"

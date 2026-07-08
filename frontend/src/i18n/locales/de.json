@@ -66,7 +66,8 @@
     "network": "Server nicht erreichbar. Läuft die API?",
     "locationNotFound": "Stadt nicht gefunden. Prüfe Schreibweise und Land.",
     "invalidInput": "Bitte prüfe die Formularfelder und versuche es erneut.",
-    "providerUnavailable": "Die Datenquelle ist gerade ausgelastet. Bitte versuche es gleich noch einmal."
+    "providerUnavailable": "Die Datenquelle ist gerade ausgelastet. Bitte versuche es gleich noch einmal.",
+    "retrying": "Datenquelle ist ausgelastet — automatischer neuer Versuch…"
   },
   "theme": {
     "toggle": "Design wechseln"

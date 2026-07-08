@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import re
 from typing import Any
@@ -17,8 +18,10 @@ OVERPASS_URLS = (
     "https://overpass.kumi.systems/api/interpreter",
 )
 USER_AGENT = "LeadSpawn/0.1 (miralimahmudovv@gmail.com)"
-REQUEST_TIMEOUT = httpx.Timeout(45.0, connect=10.0)
+REQUEST_TIMEOUT = httpx.Timeout(35.0, connect=10.0)
 OVERPASS_QUERY_TIMEOUT_SECONDS = 30
+OVERPASS_RETRY_ROUNDS = 2
+OVERPASS_RETRY_PAUSE_SECONDS = 2.0
 
 BUSINESS_TAG_KEYS = ("amenity", "shop", "craft", "office", "healthcare", "cuisine")
 
@@ -104,12 +107,37 @@ async def _query_overpass(
 ) -> list[dict[str, Any]]:
     last_error: LeadProviderError | None = None
 
-    for url in OVERPASS_URLS:
+    for round_number in range(OVERPASS_RETRY_ROUNDS):
+        if round_number:
+            logger.warning("All Overpass instances failed, retrying after pause")
+            await asyncio.sleep(OVERPASS_RETRY_PAUSE_SECONDS)
         try:
-            return await _post_to_instance(client, url, overpass_query)
+            return await _race_instances(client, overpass_query)
         except LeadProviderError as exc:
-            logger.warning("Overpass instance %s failed, trying next: %s", url, exc)
             last_error = exc
+
+    raise last_error or LeadProviderError("All Overpass instances failed")
+
+
+async def _race_instances(
+    client: httpx.AsyncClient, overpass_query: str
+) -> list[dict[str, Any]]:
+    tasks = [
+        asyncio.create_task(_post_to_instance(client, url, overpass_query))
+        for url in OVERPASS_URLS
+    ]
+    last_error: LeadProviderError | None = None
+    try:
+        for future in asyncio.as_completed(tasks):
+            try:
+                return await future
+            except LeadProviderError as exc:
+                logger.warning("Overpass instance failed in race: %s", exc)
+                last_error = exc
+    finally:
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     raise last_error or LeadProviderError("All Overpass instances failed")
 

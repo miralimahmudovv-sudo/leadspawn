@@ -91,15 +91,18 @@ async def test_fetch_happy_path():
     respx.get(overpass.NOMINATIM_URL).mock(
         return_value=httpx.Response(200, json=[BERLIN_PLACE])
     )
-    respx.post(overpass.OVERPASS_URLS[0]).mock(
-        return_value=httpx.Response(200, json={"elements": [NODE_ELEMENT, WAY_ELEMENT]})
-    )
+    for url in overpass.OVERPASS_URLS:
+        respx.post(url).mock(
+            return_value=httpx.Response(
+                200, json={"elements": [NODE_ELEMENT, WAY_ELEMENT]}
+            )
+        )
     businesses = await overpass.fetch_businesses("dentist", "Berlin", "Germany")
     assert [b.name for b in businesses] == ["Dr. Smile", "Praxis Nord"]
 
 
 @respx.mock
-async def test_fetch_fails_over_to_next_instance():
+async def test_fetch_race_tolerates_partial_instance_failures():
     respx.get(overpass.NOMINATIM_URL).mock(
         return_value=httpx.Response(200, json=[BERLIN_PLACE])
     )
@@ -107,12 +110,32 @@ async def test_fetch_fails_over_to_next_instance():
     respx.post(overpass.OVERPASS_URLS[1]).mock(
         return_value=httpx.Response(200, json={"elements": [NODE_ELEMENT]})
     )
+    respx.post(overpass.OVERPASS_URLS[2]).mock(return_value=httpx.Response(504))
     businesses = await overpass.fetch_businesses("dentist", "Berlin", "Germany")
     assert len(businesses) == 1
 
 
 @respx.mock
-async def test_fetch_treats_empty_response_with_remark_as_error():
+async def test_fetch_retries_a_second_round_after_full_failure(monkeypatch):
+    monkeypatch.setattr(overpass, "OVERPASS_RETRY_PAUSE_SECONDS", 0)
+    respx.get(overpass.NOMINATIM_URL).mock(
+        return_value=httpx.Response(200, json=[BERLIN_PLACE])
+    )
+    respx.post(overpass.OVERPASS_URLS[0]).mock(
+        side_effect=[
+            httpx.Response(504),
+            httpx.Response(200, json={"elements": [NODE_ELEMENT]}),
+        ]
+    )
+    respx.post(overpass.OVERPASS_URLS[1]).mock(return_value=httpx.Response(504))
+    respx.post(overpass.OVERPASS_URLS[2]).mock(return_value=httpx.Response(504))
+    businesses = await overpass.fetch_businesses("dentist", "Berlin", "Germany")
+    assert len(businesses) == 1
+
+
+@respx.mock
+async def test_fetch_treats_empty_response_with_remark_as_error(monkeypatch):
+    monkeypatch.setattr(overpass, "OVERPASS_RETRY_PAUSE_SECONDS", 0)
     respx.get(overpass.NOMINATIM_URL).mock(
         return_value=httpx.Response(200, json=[BERLIN_PLACE])
     )

@@ -10,8 +10,8 @@ from app.schemas.search import Business
 logger = logging.getLogger(__name__)
 
 USER_AGENT = "LeadSpawn/0.1 (miralimahmudovv@gmail.com)"
-REQUEST_TIMEOUT = httpx.Timeout(5.0, connect=4.0)
-MAX_CONCURRENCY = 20
+REQUEST_TIMEOUT = httpx.Timeout(4.0, connect=3.0)
+MAX_CONCURRENCY = 30
 MAX_ENRICH = 60
 MAX_HTML_BYTES = 600_000
 
