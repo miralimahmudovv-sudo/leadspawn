@@ -23,6 +23,7 @@ REQUEST_TIMEOUT = httpx.Timeout(50.0, connect=10.0)
 OVERPASS_QUERY_TIMEOUT_SECONDS = 30
 OVERPASS_RETRY_ROUNDS = 2
 OVERPASS_RETRY_PAUSE_SECONDS = 2.0
+MAX_BBOX_SPAN_DEGREES = 0.7
 
 BUSINESS_TAG_KEYS = ("amenity", "shop", "craft", "office", "healthcare", "cuisine")
 
@@ -78,7 +79,16 @@ async def _geocode(client: httpx.AsyncClient, city: str, country: str) -> dict[s
 
 
 def _bbox_from(place: dict[str, Any]) -> str:
-    south, north, west, east = place["boundingbox"]
+    south, north, west, east = (float(value) for value in place["boundingbox"])
+    half_span = MAX_BBOX_SPAN_DEGREES / 2
+
+    if north - south > MAX_BBOX_SPAN_DEGREES:
+        center_lat = float(place["lat"])
+        south, north = center_lat - half_span, center_lat + half_span
+    if east - west > MAX_BBOX_SPAN_DEGREES:
+        center_lon = float(place["lon"])
+        west, east = center_lon - half_span, center_lon + half_span
+
     return f"({south},{west},{north},{east})"
 
 

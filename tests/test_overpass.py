@@ -39,6 +39,21 @@ def test_bbox_from_orders_south_west_north_east():
     assert overpass._bbox_from(BERLIN_PLACE) == "(52.33,13.08,52.67,13.76)"
 
 
+def test_bbox_from_clips_oversized_areas_around_city_center():
+    hamburg_like = {
+        "boundingbox": ["53.39", "54.03", "8.10", "10.33"],
+        "lat": "53.55",
+        "lon": "10.00",
+    }
+    south, west, north, east = map(
+        float, overpass._bbox_from(hamburg_like).strip("()").split(",")
+    )
+    assert north - south <= overpass.MAX_BBOX_SPAN_DEGREES + 1e-9
+    assert east - west <= overpass.MAX_BBOX_SPAN_DEGREES + 1e-9
+    assert south < 53.55 < north
+    assert west < 10.00 < east
+
+
 def test_build_query_uses_exact_tags_for_mapped_terms():
     query = overpass._build_overpass_query("dentist", "(1,2,3,4)", 150)
     assert 'nwr["amenity"="dentist"]["name"](1,2,3,4);' in query
