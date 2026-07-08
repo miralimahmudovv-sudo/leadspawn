@@ -106,11 +106,11 @@ async def test_fetch_race_tolerates_partial_instance_failures():
     respx.get(overpass.NOMINATIM_URL).mock(
         return_value=httpx.Response(200, json=[BERLIN_PLACE])
     )
-    respx.post(overpass.OVERPASS_URLS[0]).mock(return_value=httpx.Response(504))
-    respx.post(overpass.OVERPASS_URLS[1]).mock(
+    respx.post(overpass.OVERPASS_URLS[0]).mock(
         return_value=httpx.Response(200, json={"elements": [NODE_ELEMENT]})
     )
-    respx.post(overpass.OVERPASS_URLS[2]).mock(return_value=httpx.Response(504))
+    for url in overpass.OVERPASS_URLS[1:]:
+        respx.post(url).mock(return_value=httpx.Response(504))
     businesses = await overpass.fetch_businesses("dentist", "Berlin", "Germany")
     assert len(businesses) == 1
 
@@ -127,8 +127,8 @@ async def test_fetch_retries_a_second_round_after_full_failure(monkeypatch):
             httpx.Response(200, json={"elements": [NODE_ELEMENT]}),
         ]
     )
-    respx.post(overpass.OVERPASS_URLS[1]).mock(return_value=httpx.Response(504))
-    respx.post(overpass.OVERPASS_URLS[2]).mock(return_value=httpx.Response(504))
+    for url in overpass.OVERPASS_URLS[1:]:
+        respx.post(url).mock(return_value=httpx.Response(504))
     businesses = await overpass.fetch_businesses("dentist", "Berlin", "Germany")
     assert len(businesses) == 1
 
