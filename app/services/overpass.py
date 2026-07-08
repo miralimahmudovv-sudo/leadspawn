@@ -15,10 +15,11 @@ NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 OVERPASS_URLS = (
     "https://overpass-api.de/api/interpreter",
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
 )
 USER_AGENT = "LeadSpawn/0.1 (miralimahmudovv@gmail.com)"
-REQUEST_TIMEOUT = httpx.Timeout(35.0, connect=10.0)
+REQUEST_TIMEOUT = httpx.Timeout(50.0, connect=10.0)
 OVERPASS_QUERY_TIMEOUT_SECONDS = 30
 OVERPASS_RETRY_ROUNDS = 2
 OVERPASS_RETRY_PAUSE_SECONDS = 2.0
