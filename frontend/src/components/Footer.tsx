@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
-import { Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+
+import { LogoMark } from '@/components/Logo'
 
 export function Footer() {
   const { t } = useTranslation()
@@ -20,7 +21,7 @@ export function Footer() {
             transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
             className="flex"
           >
-            <Zap className="size-4 text-primary" fill="currentColor" />
+            <LogoMark className="size-5" />
           </motion.span>
           <span className="font-semibold text-foreground">LeadSpawn</span>
           <span className="hidden sm:inline">— {t('footer.tagline')}</span>

@@ -1,18 +1,31 @@
-import { Zap } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 import { LanguageMenu } from '@/components/LanguageMenu'
+import { LogoMark } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
-export function Header() {
+const BRAND_LANDING = { type: 'spring', stiffness: 90, damping: 16 } as const
+
+export function Header({ showBrand }: { showBrand: boolean }) {
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-border/40 bg-background/70 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <a href="#" className="flex items-center gap-2">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-fuchsia-500 text-primary-foreground shadow-md">
-            <Zap className="size-4" fill="currentColor" />
-          </span>
-          <span className="text-lg font-bold tracking-tight">LeadSpawn</span>
-        </a>
+        {showBrand ? (
+          <a href="#" className="flex items-center gap-2">
+            <motion.span layoutId="brand-mark" className="flex" transition={BRAND_LANDING}>
+              <LogoMark className="size-8" />
+            </motion.span>
+            <motion.span
+              layoutId="brand-name"
+              className="text-lg font-extrabold tracking-tight"
+              transition={BRAND_LANDING}
+            >
+              LeadSpawn
+            </motion.span>
+          </a>
+        ) : (
+          <div />
+        )}
         <div className="flex items-center gap-1">
           <LanguageMenu />
           <ThemeToggle />
