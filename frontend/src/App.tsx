@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
 import { Toaster } from 'sonner'
 
+import { Background } from '@/components/Background'
+import { CustomCursor } from '@/components/CustomCursor'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
@@ -25,6 +27,8 @@ function AppContent() {
       transition={{ duration: 0.4 }}
       className="flex min-h-screen flex-col"
     >
+      <Background />
+      <CustomCursor />
       <Header />
       <main className="flex-1">
         <Hero>

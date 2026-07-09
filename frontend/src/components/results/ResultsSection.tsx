@@ -46,7 +46,14 @@ export function ResultsSection({ state, onRetry }: ResultsSectionProps) {
   }
 
   return (
-    <section id="results" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-24 sm:px-6">
+    <motion.section
+      id="results"
+      className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-24 sm:px-6"
+      initial={{ opacity: 0, y: 32 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.55, ease: 'easeOut' }}
+    >
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-bold tracking-tight">{t('results.title')}</h2>
@@ -142,6 +149,6 @@ export function ResultsSection({ state, onRetry }: ResultsSectionProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </section>
+    </motion.section>
   )
 }

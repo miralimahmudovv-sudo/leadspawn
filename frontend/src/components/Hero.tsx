@@ -2,7 +2,6 @@ import { motion, type Variants } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { Particles } from '@/components/Particles'
 import { Badge } from '@/components/ui/badge'
 
 const container: Variants = {
@@ -19,8 +18,7 @@ export function Hero({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation()
 
   return (
-    <section className="relative overflow-hidden pb-16 pt-32 sm:pt-36">
-      <Particles />
+    <section className="relative pb-16 pt-32 sm:pt-36">
       <motion.div
         className="relative mx-auto max-w-3xl px-4 text-center sm:px-6"
         variants={container}
@@ -35,7 +33,7 @@ export function Hero({ children }: { children: React.ReactNode }) {
         </motion.div>
         <motion.h1
           variants={item}
-          className="text-balance bg-gradient-to-br from-foreground via-foreground to-primary bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent sm:text-5xl md:text-6xl"
+          className="animate-gradient-text text-balance bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent sm:text-5xl md:text-6xl"
         >
           {t('hero.title')}
         </motion.h1>

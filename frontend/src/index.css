@@ -100,3 +100,58 @@ html.theme-transition * {
 .animate-ripple {
   animation: ripple 0.6s ease-out forwards;
 }
+
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+
+@keyframes gradient-pan {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-text {
+  background-size: 220% 220%;
+  animation: gradient-pan 7s ease-in-out infinite;
+}
+
+@keyframes shine-sweep {
+  from {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.28), transparent);
+  transform: translateX(-160%) skewX(-20deg);
+  pointer-events: none;
+}
+
+.btn-shine:hover::after {
+  animation: shine-sweep 0.9s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
