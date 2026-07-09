@@ -214,3 +214,72 @@ async def test_invalid_token_treated_as_anonymous(client, fake_search):
 async def test_config_endpoint_exposes_client_id(client, google_configured):
     response = await client.get("/api/v1/config")
     assert response.json() == {"google_client_id": "test-client-id"}
+
+
+def test_admin_email_is_unlimited():
+    admin_email = get_settings().admin_email
+    plan, limit = quota.limit_for(User(email=admin_email))
+    assert plan == "unlimited"
+    assert limit == quota.UNLIMITED
+
+
+async def test_admin_login_shows_id_777_and_unlimited(client, fake_search, monkeypatch):
+    monkeypatch.setattr(get_settings(), "google_client_id", "test-client-id")
+    admin_claims = {**FAKE_CLAIMS, "sub": "admin-sub", "email": get_settings().admin_email}
+    monkeypatch.setattr(
+        google_auth, "verify_google_credential", lambda credential, client_id: admin_claims
+    )
+    login = await client.post("/api/v1/auth/google", json={"credential": "x" * 30})
+    assert login.json()["user"]["id"] == get_settings().admin_user_id
+    assert login.json()["user"]["plan"] == "unlimited"
+
+    headers = {"Authorization": f"Bearer {login.json()['token']}"}
+    me = await client.get("/api/v1/auth/me", headers=headers)
+    assert me.json()["usage"]["limit"] == quota.UNLIMITED
+
+
+async def test_empty_results_do_not_consume_quota(client, monkeypatch):
+    async def empty_get_leads(**kwargs):
+        return leads.LeadResults([], cached=False)
+
+    monkeypatch.setattr(leads, "get_leads", empty_get_leads)
+    response = await client.post("/api/v1/search", json=VALID_BODY)
+    assert response.status_code == 200
+    assert response.json()["count"] == 0
+
+    usage = await client.get("/api/v1/usage")
+    assert usage.json()["used"] == 0
+
+
+async def test_history_detail_returns_stored_leads(client, monkeypatch, google_configured):
+    async def rich_get_leads(**kwargs):
+        return leads.LeadResults(
+            [Business(name="Praxis Nord", email="hi@nord.de", phone="+49 1")], cached=False
+        )
+
+    monkeypatch.setattr(leads, "get_leads", rich_get_leads)
+    login = await client.post("/api/v1/auth/google", json={"credential": "x" * 30})
+    headers = {"Authorization": f"Bearer {login.json()['token']}"}
+    await client.post("/api/v1/search", json=VALID_BODY, headers=headers)
+
+    history_id = (await client.get("/api/v1/history", headers=headers)).json()["items"][0]["id"]
+    detail = await client.get(f"/api/v1/history/{history_id}", headers=headers)
+    assert detail.status_code == 200
+    body = detail.json()
+    assert body["query"] == "dentist"
+    assert body["leads"][0]["name"] == "Praxis Nord"
+    assert body["leads"][0]["email"] == "hi@nord.de"
+
+
+async def test_history_detail_rejects_other_users_entry(client, monkeypatch, google_configured):
+    async def rich_get_leads(**kwargs):
+        return leads.LeadResults([Business(name="Alpha")], cached=False)
+
+    monkeypatch.setattr(leads, "get_leads", rich_get_leads)
+    login = await client.post("/api/v1/auth/google", json={"credential": "x" * 30})
+    headers = {"Authorization": f"Bearer {login.json()['token']}"}
+    await client.post("/api/v1/search", json=VALID_BODY, headers=headers)
+    history_id = (await client.get("/api/v1/history", headers=headers)).json()["items"][0]["id"]
+
+    anonymous = await client.get(f"/api/v1/history/{history_id}")
+    assert anonymous.status_code == 401

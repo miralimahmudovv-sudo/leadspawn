@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     cache_ttl_days: int = 30
     google_client_id: str = ""
     jwt_secret: str = "dev-secret-change-in-production"
+    admin_email: str = "miralimahmudovv@gmail.com"
+    admin_user_id: int = 777
 
     @field_validator("database_url")
     @classmethod

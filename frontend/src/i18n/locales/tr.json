@@ -77,17 +77,21 @@
   "plans": {
     "anonymous": "Misafir",
     "free": "Ücretsiz",
-    "premium": "Premium"
+    "premium": "Premium",
+    "unlimited": "Sınırsız"
   },
   "usage": {
     "tooltip": "Bugün {{limit}} aramadan {{remaining}} kaldı · {{plan}}",
+    "unlimited": "Sınırsız arama",
     "resetsAt": "Limit {{time}} itibarıyla yenilenir"
   },
   "account": {
     "title": "Hesabım",
     "history": "Arama geçmişi",
     "empty": "Henüz arama yok — arama klasörleriniz burada görünecek.",
-    "leads": "{{count}} müşteri"
+    "leads": "{{count}} müşteri",
+    "repeat": "Aramayı tekrarla",
+    "noStoredLeads": "Bu aramanın sonuçları kaydedilmemiş."
   },
   "pricing": {
     "title": "Planını seç",

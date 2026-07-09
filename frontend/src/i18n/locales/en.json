@@ -77,17 +77,21 @@
   "plans": {
     "anonymous": "Guest",
     "free": "Free",
-    "premium": "Premium"
+    "premium": "Premium",
+    "unlimited": "Unlimited"
   },
   "usage": {
     "tooltip": "{{remaining}} of {{limit}} searches left today · {{plan}}",
+    "unlimited": "Unlimited searches",
     "resetsAt": "Quota resets at {{time}}"
   },
   "account": {
     "title": "Account",
     "history": "Search history",
     "empty": "No searches yet — your search folders will appear here.",
-    "leads": "{{count}} leads"
+    "leads": "{{count}} leads",
+    "repeat": "Repeat search",
+    "noStoredLeads": "Leads for this search weren't saved."
   },
   "pricing": {
     "title": "Choose your plan",

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useAuth } from '@/components/AuthProvider'
+import { HistoryLeadsModal } from '@/components/HistoryLeadsModal'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { fetchHistory, type HistoryItem, type SearchParams } from '@/lib/api'
@@ -29,6 +30,7 @@ export function AccountPanel({ open, onClose, onRunSearch }: AccountPanelProps) 
   const { t, i18n } = useTranslation()
   const { user, usage } = useAuth()
   const [items, setItems] = useState<HistoryItem[] | null>(null)
+  const [selected, setSelected] = useState<HistoryItem | null>(null)
 
   useEffect(() => {
     if (!open || !user) return
@@ -37,19 +39,6 @@ export function AccountPanel({ open, onClose, onRunSearch }: AccountPanelProps) 
       .then((response) => setItems(response.items))
       .catch(() => setItems([]))
   }, [open, user])
-
-  const rerun = (item: HistoryItem) => {
-    onClose()
-    onRunSearch({
-      query: item.query,
-      city: item.city,
-      country: item.country,
-      limit: 20,
-      has_website: false,
-      has_phone: false,
-      has_email: false,
-    })
-  }
 
   return (
     <AnimatePresence>
@@ -97,6 +86,9 @@ export function AccountPanel({ open, onClose, onRunSearch }: AccountPanelProps) 
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{user.name ?? user.email}</p>
                 <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                <p className="mt-0.5 font-mono text-[11px] text-muted-foreground/80">
+                  ID {user.id}
+                </p>
               </div>
               <Badge className="border-primary/40 bg-primary/10 text-primary">
                 {t(`plans.${user.plan}`)}
@@ -154,7 +146,7 @@ export function AccountPanel({ open, onClose, onRunSearch }: AccountPanelProps) 
                     <motion.li key={item.id} variants={itemVariants}>
                       <motion.button
                         type="button"
-                        onClick={() => rerun(item)}
+                        onClick={() => setSelected(item)}
                         whileHover={{ x: -4 }}
                         whileTap={{ scale: 0.98 }}
                         className="group flex w-full cursor-pointer items-center gap-3 rounded-xl border bg-background/60 p-3 text-left transition-colors hover:border-primary/40 hover:bg-accent/40"
@@ -186,6 +178,15 @@ export function AccountPanel({ open, onClose, onRunSearch }: AccountPanelProps) 
               )}
             </div>
           </motion.aside>
+
+          <HistoryLeadsModal
+            item={selected}
+            onClose={() => setSelected(null)}
+            onRepeat={(params) => {
+              onClose()
+              onRunSearch(params)
+            }}
+          />
         </motion.div>
       )}
     </AnimatePresence>

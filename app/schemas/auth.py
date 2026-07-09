@@ -2,12 +2,15 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.search import Business
+
 
 class GoogleLoginRequest(BaseModel):
     credential: str = Field(min_length=20)
 
 
 class UserOut(BaseModel):
+    id: int
     email: str
     name: str | None = None
     picture: str | None = None
@@ -35,6 +38,15 @@ class HistoryItem(BaseModel):
 
 class HistoryResponse(BaseModel):
     items: list[HistoryItem]
+
+
+class HistoryDetail(BaseModel):
+    id: int
+    query: str
+    city: str
+    country: str
+    created_at: datetime
+    leads: list[Business]
 
 
 class AuthResponse(BaseModel):

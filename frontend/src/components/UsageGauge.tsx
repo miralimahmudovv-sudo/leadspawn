@@ -18,9 +18,11 @@ export function UsageGauge({ onClick }: { onClick: () => void }) {
 
   if (!usage) return null
 
+  const unlimited = usage.plan === 'unlimited'
   const remaining = Math.max(usage.limit - usage.used, 0)
-  const fraction = usage.limit > 0 ? remaining / usage.limit : 0
-  const color = gaugeColor(fraction)
+  const fraction = unlimited ? 1 : usage.limit > 0 ? remaining / usage.limit : 0
+  const color = unlimited ? '#8b5cf6' : gaugeColor(fraction)
+  const label = unlimited ? '∞' : String(remaining)
 
   return (
     <motion.button
@@ -29,16 +31,16 @@ export function UsageGauge({ onClick }: { onClick: () => void }) {
       whileHover={{ scale: 1.12 }}
       whileTap={{ scale: 0.92 }}
       className="relative flex size-10 cursor-pointer items-center justify-center"
-      aria-label={t('usage.tooltip', {
-        remaining,
-        limit: usage.limit,
-        plan: t(`plans.${usage.plan}`),
-      })}
-      title={t('usage.tooltip', {
-        remaining,
-        limit: usage.limit,
-        plan: t(`plans.${usage.plan}`),
-      })}
+      aria-label={
+        unlimited
+          ? t('usage.unlimited')
+          : t('usage.tooltip', { remaining, limit: usage.limit, plan: t(`plans.${usage.plan}`) })
+      }
+      title={
+        unlimited
+          ? t('usage.unlimited')
+          : t('usage.tooltip', { remaining, limit: usage.limit, plan: t(`plans.${usage.plan}`) })
+      }
     >
       <svg viewBox="0 0 40 40" className="size-10 -rotate-90">
         <circle
@@ -68,7 +70,7 @@ export function UsageGauge({ onClick }: { onClick: () => void }) {
       <span className="absolute inset-0 flex items-center justify-center">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
-            key={remaining}
+            key={label}
             initial={{ opacity: 0, y: 8, scale: 0.6 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.6 }}
@@ -76,11 +78,11 @@ export function UsageGauge({ onClick }: { onClick: () => void }) {
             className="text-xs font-bold tabular-nums"
             style={{ color }}
           >
-            {remaining}
+            {label}
           </motion.span>
         </AnimatePresence>
       </span>
-      {remaining === 0 && (
+      {!unlimited && remaining === 0 && (
         <motion.span
           className="absolute inset-0 rounded-full"
           animate={{ boxShadow: ['0 0 0 0 rgba(239,68,68,0.45)', '0 0 0 8px rgba(239,68,68,0)'] }}

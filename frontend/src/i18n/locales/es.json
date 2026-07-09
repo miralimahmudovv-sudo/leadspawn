@@ -77,17 +77,21 @@
   "plans": {
     "anonymous": "Invitado",
     "free": "Gratis",
-    "premium": "Premium"
+    "premium": "Premium",
+    "unlimited": "Ilimitado"
   },
   "usage": {
     "tooltip": "Quedan {{remaining}} de {{limit}} búsquedas hoy · {{plan}}",
+    "unlimited": "Búsquedas ilimitadas",
     "resetsAt": "El límite se renueva a las {{time}}"
   },
   "account": {
     "title": "Cuenta",
     "history": "Historial de búsqueda",
     "empty": "Aún no hay búsquedas: tus carpetas aparecerán aquí.",
-    "leads": "{{count}} leads"
+    "leads": "{{count}} leads",
+    "repeat": "Repetir búsqueda",
+    "noStoredLeads": "Los leads de esta búsqueda no se guardaron."
   },
   "pricing": {
     "title": "Elige tu plan",

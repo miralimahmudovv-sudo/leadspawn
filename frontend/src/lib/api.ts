@@ -43,10 +43,20 @@ export interface UsageStatus extends UsageInfo {
 }
 
 export interface UserInfo {
+  id: number
   email: string
   name: string | null
   picture: string | null
   plan: string
+}
+
+export interface HistoryDetail {
+  id: number
+  query: string
+  city: string
+  country: string
+  created_at: string
+  leads: Lead[]
 }
 
 export interface SearchResponse {
@@ -149,6 +159,10 @@ export function fetchUsage(): Promise<UsageStatus> {
 
 export function fetchHistory(): Promise<{ items: HistoryItem[] }> {
   return request('/api/v1/history')
+}
+
+export function fetchHistoryDetail(id: number): Promise<HistoryDetail> {
+  return request(`/api/v1/history/${id}`)
 }
 
 export function mapsUrl(lead: Lead): string {

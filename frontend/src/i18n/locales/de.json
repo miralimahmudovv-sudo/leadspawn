@@ -77,17 +77,21 @@
   "plans": {
     "anonymous": "Gast",
     "free": "Kostenlos",
-    "premium": "Premium"
+    "premium": "Premium",
+    "unlimited": "Unbegrenzt"
   },
   "usage": {
     "tooltip": "Noch {{remaining}} von {{limit}} Suchen heute · {{plan}}",
+    "unlimited": "Unbegrenzte Suchen",
     "resetsAt": "Limit erneuert sich um {{time}}"
   },
   "account": {
     "title": "Konto",
     "history": "Suchverlauf",
     "empty": "Noch keine Suchen — deine Suchordner erscheinen hier.",
-    "leads": "{{count}} Leads"
+    "leads": "{{count}} Leads",
+    "repeat": "Suche wiederholen",
+    "noStoredLeads": "Leads dieser Suche wurden nicht gespeichert."
   },
   "pricing": {
     "title": "Wähle deinen Plan",

@@ -39,9 +39,8 @@ export function UserMenu({ onOpenPricing, onOpenAccount }: UserMenuProps) {
         <div className="px-2 py-1.5">
           <p className="truncate text-sm font-medium">{user.name ?? user.email}</p>
           <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-          <p className="mt-1 text-xs font-medium text-primary">
-            {t(`plans.${user.plan}`)}
-          </p>
+          <p className="mt-0.5 font-mono text-[11px] text-muted-foreground/80">ID {user.id}</p>
+          <p className="mt-1 text-xs font-medium text-primary">{t(`plans.${user.plan}`)}</p>
         </div>
         <DropdownMenuItem onSelect={onOpenAccount}>
           <UserRound className="size-4" />

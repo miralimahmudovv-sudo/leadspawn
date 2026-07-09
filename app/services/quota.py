@@ -4,15 +4,19 @@ from sqlalchemy import case, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.models.user import SearchUsage, User
 
 PLAN_LIMITS = {"anonymous": 3, "free": 10, "premium": 50}
+UNLIMITED = 1_000_000
 RESET_AFTER = timedelta(hours=24)
 
 
 def limit_for(user: User | None) -> tuple[str, int]:
     if user is None:
         return "anonymous", PLAN_LIMITS["anonymous"]
+    if user.email == get_settings().admin_email:
+        return "unlimited", UNLIMITED
     plan = user.plan if user.plan in PLAN_LIMITS else "free"
     return plan, PLAN_LIMITS[plan]
 

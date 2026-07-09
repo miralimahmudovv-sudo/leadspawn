@@ -13,12 +13,14 @@ from app.schemas.auth import (
     AppConfigResponse,
     AuthResponse,
     GoogleLoginRequest,
+    HistoryDetail,
     HistoryItem,
     HistoryResponse,
     MeResponse,
     UsageOut,
     UserOut,
 )
+from app.schemas.search import Business
 from app.services import google_auth, quota
 
 logger = logging.getLogger(__name__)
@@ -27,7 +29,12 @@ router = APIRouter(prefix="/api/v1", tags=["auth"])
 
 
 def _user_out(user: User) -> UserOut:
-    return UserOut(email=user.email, name=user.name, picture=user.picture, plan=user.plan)
+    settings = get_settings()
+    public_id = settings.admin_user_id if user.email == settings.admin_email else user.id
+    plan, _ = quota.limit_for(user)
+    return UserOut(
+        id=public_id, email=user.email, name=user.name, picture=user.picture, plan=plan
+    )
 
 
 @router.get("/config", response_model=AppConfigResponse)
@@ -128,3 +135,24 @@ async def history(
     )
     items = [HistoryItem.model_validate(row) for row in result.scalars()]
     return HistoryResponse(items=items)
+
+
+@router.get("/history/{history_id}", response_model=HistoryDetail)
+async def history_detail(
+    history_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: User | None = Depends(get_optional_user),
+) -> HistoryDetail:
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not signed in")
+    row = await session.get(SearchHistory, history_id)
+    if row is None or row.user_id != user.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
+    return HistoryDetail(
+        id=row.id,
+        query=row.query,
+        city=row.city,
+        country=row.country,
+        created_at=row.created_at,
+        leads=[Business(**lead) for lead in (row.leads or [])],
+    )

@@ -65,17 +65,22 @@ async def search(
             detail="The business data provider is temporarily unavailable. Please try again.",
         ) from exc
 
-    if user is not None:
-        session.add(
-            SearchHistory(
-                user_id=user.id,
-                query=request.query,
-                city=request.city,
-                country=request.country,
-                result_count=len(results.businesses),
+    businesses = results.businesses
+    if businesses:
+        if user is not None:
+            session.add(
+                SearchHistory(
+                    user_id=user.id,
+                    query=request.query,
+                    city=request.city,
+                    country=request.country,
+                    result_count=len(businesses),
+                    leads=[business.model_dump() for business in businesses],
+                )
             )
-        )
-    used, resets_at = await quota.increment(session, subject)
+        used, resets_at = await quota.increment(session, subject)
+    else:
+        used, resets_at = await quota.get_state(session, subject)
 
     return SearchResponse(
         query=request.query,
