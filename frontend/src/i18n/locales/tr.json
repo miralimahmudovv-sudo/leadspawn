@@ -67,7 +67,32 @@
     "locationNotFound": "Bu şehri bulamadık. Yazımı ve ülkeyi kontrol edin.",
     "invalidInput": "Lütfen form alanlarını kontrol edip tekrar deneyin.",
     "providerUnavailable": "Veri sağlayıcı şu anda meşgul. Lütfen birazdan tekrar deneyin.",
-    "retrying": "Veri kaynağı meşgul — otomatik olarak yeniden deneniyor…"
+    "retrying": "Veri kaynağı meşgul — otomatik olarak yeniden deneniyor…",
+    "limitReached": "Günlük arama limiti doldu — planınızı yükseltin veya yarın tekrar gelin.",
+    "notSignedIn": "Lütfen tekrar giriş yapın."
+  },
+  "auth": {
+    "signOut": "Çıkış yap"
+  },
+  "plans": {
+    "anonymous": "Misafir",
+    "free": "Ücretsiz",
+    "premium": "Premium"
+  },
+  "usage": {
+    "tooltip": "Bugün {{limit}} aramadan {{remaining}} kaldı · {{plan}}"
+  },
+  "pricing": {
+    "title": "Planını seç",
+    "subtitle": "Daha fazla günlük arama.",
+    "perDay": "Günde {{count}} arama",
+    "noSignup": "Kayıt gerekmez",
+    "current": "Mevcut planınız",
+    "comingSoon": "Ödemeler yakında",
+    "upgrade": "Premium'a yükselt",
+    "discount": "−48% kalıcı",
+    "month": "/ay",
+    "close": "Kapat"
   },
   "theme": {
     "toggle": "Temayı değiştir"

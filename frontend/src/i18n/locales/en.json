@@ -67,7 +67,32 @@
     "locationNotFound": "We couldn't find that city. Check the spelling and country.",
     "invalidInput": "Please check the form fields and try again.",
     "providerUnavailable": "The data provider is busy right now. Please try again in a moment.",
-    "retrying": "The data source is busy — retrying automatically…"
+    "retrying": "The data source is busy — retrying automatically…",
+    "limitReached": "Daily search limit reached — upgrade your plan or come back tomorrow.",
+    "notSignedIn": "Please sign in again."
+  },
+  "auth": {
+    "signOut": "Sign out"
+  },
+  "plans": {
+    "anonymous": "Guest",
+    "free": "Free",
+    "premium": "Premium"
+  },
+  "usage": {
+    "tooltip": "{{remaining}} of {{limit}} searches left today · {{plan}}"
+  },
+  "pricing": {
+    "title": "Choose your plan",
+    "subtitle": "More daily searches for your outreach.",
+    "perDay": "{{count}} searches per day",
+    "noSignup": "No sign-up needed",
+    "current": "Your current plan",
+    "comingSoon": "Payments coming soon",
+    "upgrade": "Upgrade to Premium",
+    "discount": "−48% forever",
+    "month": "/mo",
+    "close": "Close"
   },
   "theme": {
     "toggle": "Toggle theme"

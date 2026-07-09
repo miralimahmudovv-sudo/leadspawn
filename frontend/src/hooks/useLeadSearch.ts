@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
-import { ApiError, searchLeads, type Lead, type SearchParams } from '@/lib/api'
+import { ApiError, searchLeads, type Lead, type SearchParams, type UsageInfo } from '@/lib/api'
 import type { ExportMeta } from '@/lib/export'
 
 export type SearchStatus = 'idle' | 'searching' | 'revealing' | 'done' | 'error'
@@ -31,7 +31,12 @@ const TARGET_REVEAL_TOTAL_MS = 3500
 const MAX_PROVIDER_RETRIES = 1
 const PROVIDER_RETRY_DELAY_MS = 4000
 
-export function useLeadSearch() {
+interface LeadSearchOptions {
+  onUsage?: (usage: UsageInfo) => void
+  onLimitReached?: () => void
+}
+
+export function useLeadSearch({ onUsage, onLimitReached }: LeadSearchOptions = {}) {
   const { t } = useTranslation()
   const [state, setState] = useState<LeadSearchState>(INITIAL_STATE)
   const abortRef = useRef<AbortController | null>(null)
@@ -83,9 +88,11 @@ export function useLeadSearch() {
         const response = await searchLeads(params, controller.signal)
         results = response.results
         cached = response.cached
+        if (response.usage) onUsage?.(response.usage)
       } catch (error) {
         if (controller.signal.aborted) return
         const errorKey = error instanceof ApiError ? error.messageKey : 'errors.network'
+        if (errorKey === 'errors.limitReached') onLimitReached?.()
         if (errorKey === 'errors.providerUnavailable' && attempt < MAX_PROVIDER_RETRIES) {
           toast.info(t('errors.retrying'))
           retryTimerRef.current = window.setTimeout(() => {
@@ -124,7 +131,7 @@ export function useLeadSearch() {
         }
       }, delay)
     },
-    [stopReveal, stopRetry, t],
+    [stopReveal, stopRetry, t, onUsage, onLimitReached],
   )
 
   const retry = useCallback(() => {

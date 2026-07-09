@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from app.api.auth import router as auth_router
 from app.api.search import router as search_router
 from app.core.config import get_settings
 from app.db.session import engine
@@ -36,6 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(search_router)
+app.include_router(auth_router)
 
 
 class HealthResponse(BaseModel):

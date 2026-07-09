@@ -10,12 +10,11 @@ from app.services.exceptions import LeadProviderError, LocationNotFoundError
 VALID_BODY = {"query": "dentist", "city": "Berlin", "country": "Germany", "limit": 5}
 
 
-async def override_session():
-    yield None
-
-
 @pytest.fixture
-async def client():
+async def client(db_session):
+    async def override_session():
+        yield db_session
+
     app.dependency_overrides[get_session] = override_session
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c

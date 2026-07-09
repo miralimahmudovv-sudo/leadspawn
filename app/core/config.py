@@ -16,6 +16,8 @@ class Settings(BaseSettings):
         "postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/leadspawn"
     )
     cache_ttl_days: int = 30
+    google_client_id: str = ""
+    jwt_secret: str = "dev-secret-change-in-production"
 
     @field_validator("database_url")
     @classmethod

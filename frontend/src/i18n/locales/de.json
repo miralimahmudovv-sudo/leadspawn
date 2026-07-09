@@ -67,7 +67,32 @@
     "locationNotFound": "Stadt nicht gefunden. Prüfe Schreibweise und Land.",
     "invalidInput": "Bitte prüfe die Formularfelder und versuche es erneut.",
     "providerUnavailable": "Die Datenquelle ist gerade ausgelastet. Bitte versuche es gleich noch einmal.",
-    "retrying": "Datenquelle ist ausgelastet — automatischer neuer Versuch…"
+    "retrying": "Datenquelle ist ausgelastet — automatischer neuer Versuch…",
+    "limitReached": "Tageslimit erreicht — Plan upgraden oder morgen wiederkommen.",
+    "notSignedIn": "Bitte melde dich erneut an."
+  },
+  "auth": {
+    "signOut": "Abmelden"
+  },
+  "plans": {
+    "anonymous": "Gast",
+    "free": "Kostenlos",
+    "premium": "Premium"
+  },
+  "usage": {
+    "tooltip": "Noch {{remaining}} von {{limit}} Suchen heute · {{plan}}"
+  },
+  "pricing": {
+    "title": "Wähle deinen Plan",
+    "subtitle": "Mehr tägliche Suchen für deine Akquise.",
+    "perDay": "{{count}} Suchen pro Tag",
+    "noSignup": "Ohne Anmeldung",
+    "current": "Dein aktueller Plan",
+    "comingSoon": "Zahlungen folgen bald",
+    "upgrade": "Auf Premium upgraden",
+    "discount": "−48% für immer",
+    "month": "/Mon.",
+    "close": "Schließen"
   },
   "theme": {
     "toggle": "Design wechseln"

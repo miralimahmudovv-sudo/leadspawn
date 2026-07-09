@@ -67,7 +67,32 @@
     "locationNotFound": "No encontramos esa ciudad. Revisa la ortografía y el país.",
     "invalidInput": "Revisa los campos del formulario e inténtalo de nuevo.",
     "providerUnavailable": "La fuente de datos está ocupada. Inténtalo de nuevo en un momento.",
-    "retrying": "La fuente de datos está ocupada; reintentando automáticamente…"
+    "retrying": "La fuente de datos está ocupada; reintentando automáticamente…",
+    "limitReached": "Límite diario alcanzado: mejora tu plan o vuelve mañana.",
+    "notSignedIn": "Inicia sesión de nuevo."
+  },
+  "auth": {
+    "signOut": "Cerrar sesión"
+  },
+  "plans": {
+    "anonymous": "Invitado",
+    "free": "Gratis",
+    "premium": "Premium"
+  },
+  "usage": {
+    "tooltip": "Quedan {{remaining}} de {{limit}} búsquedas hoy · {{plan}}"
+  },
+  "pricing": {
+    "title": "Elige tu plan",
+    "subtitle": "Más búsquedas diarias para tu prospección.",
+    "perDay": "{{count}} búsquedas al día",
+    "noSignup": "Sin registro",
+    "current": "Tu plan actual",
+    "comingSoon": "Pagos próximamente",
+    "upgrade": "Mejorar a Premium",
+    "discount": "−48% para siempre",
+    "month": "/mes",
+    "close": "Cerrar"
   },
   "theme": {
     "toggle": "Cambiar tema"

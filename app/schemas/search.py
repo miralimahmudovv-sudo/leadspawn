@@ -54,10 +54,17 @@ class Business(BaseModel):
     longitude: float | None = None
 
 
+class SearchUsageInfo(BaseModel):
+    used: int
+    limit: int
+    plan: str
+
+
 class SearchResponse(BaseModel):
     query: str
     city: str
     country: str
     count: int
     cached: bool = False
+    usage: SearchUsageInfo | None = None
     results: list[Business]

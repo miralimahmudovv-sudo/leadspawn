@@ -9,7 +9,7 @@ from alembic import context
 
 from app.core.config import get_settings
 from app.db.base import Base
-from app.models import search as _search_models  # noqa: F401
+import app.models as _models  # noqa: F401
 
 config = context.config
 
