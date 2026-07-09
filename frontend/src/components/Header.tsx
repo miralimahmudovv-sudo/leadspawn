@@ -13,9 +13,10 @@ const BRAND_LANDING = { type: 'spring', stiffness: 90, damping: 16 } as const
 interface HeaderProps {
   showBrand: boolean
   onOpenPricing: () => void
+  onOpenAccount: () => void
 }
 
-export function Header({ showBrand, onOpenPricing }: HeaderProps) {
+export function Header({ showBrand, onOpenPricing, onOpenAccount }: HeaderProps) {
   const { user } = useAuth()
 
   return (
@@ -39,7 +40,11 @@ export function Header({ showBrand, onOpenPricing }: HeaderProps) {
         )}
         <div className="flex items-center gap-2">
           <UsageGauge onClick={onOpenPricing} />
-          {user ? <UserMenu onOpenPricing={onOpenPricing} /> : <GoogleSignIn />}
+          {user ? (
+            <UserMenu onOpenPricing={onOpenPricing} onOpenAccount={onOpenAccount} />
+          ) : (
+            <GoogleSignIn />
+          )}
           <div className="flex items-center gap-1">
             <LanguageMenu />
             <ThemeToggle />

@@ -80,7 +80,14 @@
     "premium": "Premium"
   },
   "usage": {
-    "tooltip": "Bugün {{limit}} aramadan {{remaining}} kaldı · {{plan}}"
+    "tooltip": "Bugün {{limit}} aramadan {{remaining}} kaldı · {{plan}}",
+    "resetsAt": "Limit {{time}} itibarıyla yenilenir"
+  },
+  "account": {
+    "title": "Hesabım",
+    "history": "Arama geçmişi",
+    "empty": "Henüz arama yok — arama klasörleriniz burada görünecek.",
+    "leads": "{{count}} müşteri"
   },
   "pricing": {
     "title": "Planını seç",

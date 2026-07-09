@@ -1,4 +1,4 @@
-import { Crown, LogOut } from 'lucide-react'
+import { Crown, LogOut, UserRound } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { useAuth } from '@/components/AuthProvider'
@@ -9,7 +9,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export function UserMenu({ onOpenPricing }: { onOpenPricing: () => void }) {
+interface UserMenuProps {
+  onOpenPricing: () => void
+  onOpenAccount: () => void
+}
+
+export function UserMenu({ onOpenPricing, onOpenAccount }: UserMenuProps) {
   const { t } = useTranslation()
   const { user, logout } = useAuth()
 
@@ -38,6 +43,10 @@ export function UserMenu({ onOpenPricing }: { onOpenPricing: () => void }) {
             {t(`plans.${user.plan}`)}
           </p>
         </div>
+        <DropdownMenuItem onSelect={onOpenAccount}>
+          <UserRound className="size-4" />
+          {t('account.title')}
+        </DropdownMenuItem>
         {user.plan !== 'premium' && (
           <DropdownMenuItem onSelect={onOpenPricing}>
             <Crown className="size-4 text-amber-500" />

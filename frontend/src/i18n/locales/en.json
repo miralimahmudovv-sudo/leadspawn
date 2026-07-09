@@ -80,7 +80,14 @@
     "premium": "Premium"
   },
   "usage": {
-    "tooltip": "{{remaining}} of {{limit}} searches left today · {{plan}}"
+    "tooltip": "{{remaining}} of {{limit}} searches left today · {{plan}}",
+    "resetsAt": "Quota resets at {{time}}"
+  },
+  "account": {
+    "title": "Account",
+    "history": "Search history",
+    "empty": "No searches yet — your search folders will appear here.",
+    "leads": "{{count}} leads"
   },
   "pricing": {
     "title": "Choose your plan",

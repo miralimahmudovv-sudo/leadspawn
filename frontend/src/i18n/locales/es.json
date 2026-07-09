@@ -80,7 +80,14 @@
     "premium": "Premium"
   },
   "usage": {
-    "tooltip": "Quedan {{remaining}} de {{limit}} búsquedas hoy · {{plan}}"
+    "tooltip": "Quedan {{remaining}} de {{limit}} búsquedas hoy · {{plan}}",
+    "resetsAt": "El límite se renueva a las {{time}}"
+  },
+  "account": {
+    "title": "Cuenta",
+    "history": "Historial de búsqueda",
+    "empty": "Aún no hay búsquedas: tus carpetas aparecerán aquí.",
+    "leads": "{{count}} leads"
   },
   "pricing": {
     "title": "Elige tu plan",

@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import { Toaster } from 'sonner'
 
+import { AccountPanel } from '@/components/AccountPanel'
 import { AuthProvider, useAuth } from '@/components/AuthProvider'
 import { Background } from '@/components/Background'
 import { CustomCursor } from '@/components/CustomCursor'
@@ -27,6 +28,7 @@ function prefersReducedMotion(): boolean {
 function AppContent() {
   const { applyUsage, refreshUsage } = useAuth()
   const [pricingOpen, setPricingOpen] = useState(false)
+  const [accountOpen, setAccountOpen] = useState(false)
   const { state, search, retry } = useLeadSearch({
     onUsage: applyUsage,
     onLimitReached: () => {
@@ -50,7 +52,11 @@ function AppContent() {
       >
         <Background />
         <CustomCursor />
-        <Header showBrand={!splashVisible} onOpenPricing={() => setPricingOpen(true)} />
+        <Header
+          showBrand={!splashVisible}
+          onOpenPricing={() => setPricingOpen(true)}
+          onOpenAccount={() => setAccountOpen(true)}
+        />
         <main className="flex-1">
           <Hero>
             <SearchForm busy={busy} onSearch={(params) => void search(params)} />
@@ -60,6 +66,14 @@ function AppContent() {
         <Footer />
       </motion.div>
       <PricingDialog open={pricingOpen} onClose={() => setPricingOpen(false)} />
+      <AccountPanel
+        open={accountOpen}
+        onClose={() => setAccountOpen(false)}
+        onRunSearch={(params) => {
+          void search(params)
+          document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' })
+        }}
+      />
     </>
   )
 }

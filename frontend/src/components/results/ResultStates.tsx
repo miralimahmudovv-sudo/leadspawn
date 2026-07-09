@@ -78,13 +78,19 @@ export function LoadingState({ city }: { city: string }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <div className="mb-6 flex items-center justify-center gap-3 text-sm text-muted-foreground">
-        <motion.span
-          animate={{ rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-          className="text-primary"
-        >
-          <Radar className="size-5" />
-        </motion.span>
+        <span className="relative flex size-9 items-center justify-center">
+          <motion.span
+            className="absolute inset-0 rounded-full border-2 border-primary/20 border-t-primary"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1.1, repeat: Infinity, ease: 'linear' }}
+          />
+          <motion.span
+            className="absolute inset-1.5 rounded-full border border-primary/15 border-b-primary/60"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
+          />
+          <Radar className="size-3.5 text-primary" />
+        </span>
         <AnimatePresence mode="wait">
           <motion.span
             key={phase}

@@ -8,11 +8,13 @@ from app.api.deps import get_optional_user, usage_subject
 from app.core.config import get_settings
 from app.core.security import create_session_token
 from app.db.session import get_session
-from app.models.user import User
+from app.models.user import SearchHistory, User
 from app.schemas.auth import (
     AppConfigResponse,
     AuthResponse,
     GoogleLoginRequest,
+    HistoryItem,
+    HistoryResponse,
     MeResponse,
     UsageOut,
     UserOut,
@@ -85,10 +87,12 @@ async def me(
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not signed in")
     plan, limit = quota.limit_for(user)
-    used = await quota.get_used(session, usage_subject(user, request))
+    used, resets_at = await quota.get_state(session, usage_subject(user, request))
     return MeResponse(
         user=_user_out(user),
-        usage=UsageOut(used=used, limit=limit, plan=plan, authenticated=True),
+        usage=UsageOut(
+            used=used, limit=limit, plan=plan, authenticated=True, resets_at=resets_at
+        ),
     )
 
 
@@ -99,5 +103,28 @@ async def usage(
     user: User | None = Depends(get_optional_user),
 ) -> UsageOut:
     plan, limit = quota.limit_for(user)
-    used = await quota.get_used(session, usage_subject(user, request))
-    return UsageOut(used=used, limit=limit, plan=plan, authenticated=user is not None)
+    used, resets_at = await quota.get_state(session, usage_subject(user, request))
+    return UsageOut(
+        used=used,
+        limit=limit,
+        plan=plan,
+        authenticated=user is not None,
+        resets_at=resets_at,
+    )
+
+
+@router.get("/history", response_model=HistoryResponse)
+async def history(
+    session: AsyncSession = Depends(get_session),
+    user: User | None = Depends(get_optional_user),
+) -> HistoryResponse:
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not signed in")
+    result = await session.execute(
+        select(SearchHistory)
+        .where(SearchHistory.user_id == user.id)
+        .order_by(SearchHistory.created_at.desc(), SearchHistory.id.desc())
+        .limit(50)
+    )
+    items = [HistoryItem.model_validate(row) for row in result.scalars()]
+    return HistoryResponse(items=items)

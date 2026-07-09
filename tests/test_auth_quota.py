@@ -56,11 +56,54 @@ async def test_anonymous_gets_three_searches_then_429(client, fake_search):
     for expected_used in (1, 2, 3):
         response = await client.post("/api/v1/search", json=VALID_BODY)
         assert response.status_code == 200
-        assert response.json()["usage"] == {"used": expected_used, "limit": 3, "plan": "anonymous"}
+        usage = response.json()["usage"]
+        assert (usage["used"], usage["limit"], usage["plan"]) == (expected_used, 3, "anonymous")
+        assert usage["resets_at"] is not None
 
     blocked = await client.post("/api/v1/search", json=VALID_BODY)
     assert blocked.status_code == 429
     assert blocked.json()["detail"]["code"] == "search_limit_reached"
+    assert blocked.json()["detail"]["resets_at"] is not None
+
+
+async def test_quota_resets_24h_after_last_search(client, fake_search, db_session):
+    from datetime import datetime, timedelta, timezone
+
+    from app.models.user import SearchUsage
+
+    db_session.add(
+        SearchUsage(
+            subject="ip:127.0.0.1",
+            count=3,
+            last_used_at=datetime.now(timezone.utc) - timedelta(hours=25),
+        )
+    )
+    await db_session.commit()
+
+    usage = await client.get("/api/v1/usage")
+    assert usage.json()["used"] == 0
+
+    response = await client.post("/api/v1/search", json=VALID_BODY)
+    assert response.status_code == 200
+    assert response.json()["usage"]["used"] == 1
+
+
+async def test_quota_not_reset_within_24h(client, fake_search, db_session):
+    from datetime import datetime, timedelta, timezone
+
+    from app.models.user import SearchUsage
+
+    db_session.add(
+        SearchUsage(
+            subject="ip:127.0.0.1",
+            count=3,
+            last_used_at=datetime.now(timezone.utc) - timedelta(hours=23),
+        )
+    )
+    await db_session.commit()
+
+    blocked = await client.post("/api/v1/search", json=VALID_BODY)
+    assert blocked.status_code == 429
 
 
 async def test_failed_search_does_not_consume_quota(client, monkeypatch):
@@ -89,10 +132,44 @@ async def test_google_login_registers_user_and_signed_in_limit(
     headers = {"Authorization": f"Bearer {token}"}
     me = await client.get("/api/v1/auth/me", headers=headers)
     assert me.status_code == 200
-    assert me.json()["usage"] == {"used": 0, "limit": 10, "plan": "free", "authenticated": True}
+    usage = me.json()["usage"]
+    assert (usage["used"], usage["limit"], usage["plan"], usage["authenticated"]) == (0, 10, "free", True)
 
     search = await client.post("/api/v1/search", json=VALID_BODY, headers=headers)
-    assert search.json()["usage"] == {"used": 1, "limit": 10, "plan": "free"}
+    usage = search.json()["usage"]
+    assert (usage["used"], usage["limit"], usage["plan"]) == (1, 10, "free")
+
+
+async def test_history_records_signed_in_searches(client, fake_search, google_configured):
+    login = await client.post("/api/v1/auth/google", json={"credential": "x" * 30})
+    headers = {"Authorization": f"Bearer {login.json()['token']}"}
+
+    await client.post("/api/v1/search", json=VALID_BODY, headers=headers)
+    await client.post(
+        "/api/v1/search", json={**VALID_BODY, "query": "bakery", "city": "Paris", "country": "France"}, headers=headers
+    )
+
+    history = await client.get("/api/v1/history", headers=headers)
+    assert history.status_code == 200
+    items = history.json()["items"]
+    assert [i["query"] for i in items] == ["bakery", "dentist"]
+    assert items[0]["city"] == "Paris"
+    assert items[0]["result_count"] == 1
+    assert items[0]["created_at"] is not None
+
+
+async def test_history_not_recorded_for_anonymous(client, fake_search, google_configured):
+    await client.post("/api/v1/search", json=VALID_BODY)
+
+    login = await client.post("/api/v1/auth/google", json={"credential": "x" * 30})
+    headers = {"Authorization": f"Bearer {login.json()['token']}"}
+    history = await client.get("/api/v1/history", headers=headers)
+    assert history.json()["items"] == []
+
+
+async def test_history_requires_auth(client):
+    response = await client.get("/api/v1/history")
+    assert response.status_code == 401
 
 
 async def test_login_twice_reuses_same_user(client, google_configured, db_session):
@@ -120,7 +197,8 @@ async def test_premium_user_gets_50(client, fake_search, google_configured, db_s
     assert me.json()["user"]["plan"] == "premium"
 
 
-async def test_login_without_server_config_returns_503(client):
+async def test_login_without_server_config_returns_503(client, monkeypatch):
+    monkeypatch.setattr(get_settings(), "google_client_id", "")
     response = await client.post("/api/v1/auth/google", json={"credential": "x" * 30})
     assert response.status_code == 503
 

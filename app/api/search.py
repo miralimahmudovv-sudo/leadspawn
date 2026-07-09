@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_optional_user, usage_subject
 from app.db.session import get_session
-from app.models.user import User
+from app.models.user import SearchHistory, User
 from app.schemas.search import SearchRequest, SearchResponse, SearchUsageInfo
 from app.services import leads, quota
 from app.services.exceptions import LeadProviderError, LocationNotFoundError
@@ -24,11 +24,17 @@ async def search(
 ) -> SearchResponse:
     plan, limit = quota.limit_for(user)
     subject = usage_subject(user, http_request)
-    used = await quota.get_used(session, subject)
+    used, resets_at = await quota.get_state(session, subject)
     if used >= limit:
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail={"code": "search_limit_reached", "used": used, "limit": limit, "plan": plan},
+            detail={
+                "code": "search_limit_reached",
+                "used": used,
+                "limit": limit,
+                "plan": plan,
+                "resets_at": resets_at.isoformat() if resets_at else None,
+            },
         )
 
     try:
@@ -59,7 +65,17 @@ async def search(
             detail="The business data provider is temporarily unavailable. Please try again.",
         ) from exc
 
-    used = await quota.increment(session, subject)
+    if user is not None:
+        session.add(
+            SearchHistory(
+                user_id=user.id,
+                query=request.query,
+                city=request.city,
+                country=request.country,
+                result_count=len(results.businesses),
+            )
+        )
+    used, resets_at = await quota.increment(session, subject)
 
     return SearchResponse(
         query=request.query,
@@ -67,6 +83,6 @@ async def search(
         country=request.country,
         count=len(results.businesses),
         cached=results.cached,
-        usage=SearchUsageInfo(used=used, limit=limit, plan=plan),
+        usage=SearchUsageInfo(used=used, limit=limit, plan=plan, resets_at=resets_at),
         results=results.businesses,
     )

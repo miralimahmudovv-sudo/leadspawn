@@ -26,6 +26,16 @@ export interface UsageInfo {
   used: number
   limit: number
   plan: string
+  resets_at?: string | null
+}
+
+export interface HistoryItem {
+  id: number
+  query: string
+  city: string
+  country: string
+  result_count: number
+  created_at: string
 }
 
 export interface UsageStatus extends UsageInfo {
@@ -135,6 +145,10 @@ export function fetchMe(): Promise<{ user: UserInfo; usage: UsageStatus }> {
 
 export function fetchUsage(): Promise<UsageStatus> {
   return request('/api/v1/usage')
+}
+
+export function fetchHistory(): Promise<{ items: HistoryItem[] }> {
+  return request('/api/v1/history')
 }
 
 export function mapsUrl(lead: Lead): string {

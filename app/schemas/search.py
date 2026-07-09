@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -58,6 +60,7 @@ class SearchUsageInfo(BaseModel):
     used: int
     limit: int
     plan: str
+    resets_at: datetime | None = None
 
 
 class SearchResponse(BaseModel):

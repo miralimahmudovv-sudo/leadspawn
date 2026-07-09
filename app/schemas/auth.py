@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class GoogleLoginRequest(BaseModel):
@@ -17,6 +19,22 @@ class UsageOut(BaseModel):
     limit: int
     plan: str
     authenticated: bool
+    resets_at: datetime | None = None
+
+
+class HistoryItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    query: str
+    city: str
+    country: str
+    result_count: int
+    created_at: datetime
+
+
+class HistoryResponse(BaseModel):
+    items: list[HistoryItem]
 
 
 class AuthResponse(BaseModel):
