@@ -59,7 +59,9 @@ export function SearchForm({ busy, onSearch }: SearchFormProps) {
       has_phone: hasPhone,
       has_email: hasEmail,
     })
-    document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    window.setTimeout(() => {
+      document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 400)
   }
 
   return (

@@ -6,6 +6,12 @@
       "runtimeExecutable": "corepack",
       "runtimeArgs": ["pnpm", "--dir", "frontend", "dev"],
       "port": 5173
+    },
+    {
+      "name": "social-publisher-ui",
+      "runtimeExecutable": "C:\\Users\\miral\\AppData\\Local\\pnpm\\pnpm.exe",
+      "runtimeArgs": ["-C", "C:\\Users\\miral\\Desktop\\Social Publisher\\social-publisher", "dev"],
+      "port": 1420
     }
   ]
 }

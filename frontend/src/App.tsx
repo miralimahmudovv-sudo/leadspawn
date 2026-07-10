@@ -58,7 +58,7 @@ function AppContent() {
           onOpenAccount={() => setAccountOpen(true)}
         />
         <main className="flex-1">
-          <Hero>
+          <Hero compact={state.status !== 'idle'}>
             <SearchForm busy={busy} onSearch={(params) => void search(params)} />
           </Hero>
           <ResultsSection state={state} onRetry={retry} />
