@@ -80,6 +80,9 @@
     "premium": "Premium",
     "unlimited": "Unbegrenzt"
   },
+  "online": {
+    "tooltip": "Jetzt online: {{count}}"
+  },
   "usage": {
     "tooltip": "Noch {{remaining}} von {{limit}} Suchen heute · {{plan}}",
     "unlimited": "Unbegrenzte Suchen",

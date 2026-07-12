@@ -82,6 +82,9 @@
     "premium": "Премиум",
     "unlimited": "Безлимит"
   },
+  "online": {
+    "tooltip": "Сейчас на сайте: {{count}}"
+  },
   "usage": {
     "tooltip": "Осталось {{remaining}} из {{limit}} поисков сегодня · {{plan}}",
     "unlimited": "Безлимитные поиски",

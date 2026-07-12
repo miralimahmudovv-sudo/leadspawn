@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.api.auth import router as auth_router
+from app.api.presence import router as presence_router
 from app.api.search import router as search_router
 from app.core.config import get_settings
 from app.db.session import engine
@@ -38,6 +39,7 @@ app.add_middleware(
 )
 app.include_router(search_router)
 app.include_router(auth_router)
+app.include_router(presence_router)
 
 
 class HealthResponse(BaseModel):

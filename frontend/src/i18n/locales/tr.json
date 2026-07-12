@@ -80,6 +80,9 @@
     "premium": "Premium",
     "unlimited": "Sınırsız"
   },
+  "online": {
+    "tooltip": "Şu anda çevrimiçi: {{count}}"
+  },
   "usage": {
     "tooltip": "Bugün {{limit}} aramadan {{remaining}} kaldı · {{plan}}",
     "unlimited": "Sınırsız arama",

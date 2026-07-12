@@ -80,6 +80,9 @@
     "premium": "Premium",
     "unlimited": "Unlimited"
   },
+  "online": {
+    "tooltip": "{{count}} online now"
+  },
   "usage": {
     "tooltip": "{{remaining}} of {{limit}} searches left today · {{plan}}",
     "unlimited": "Unlimited searches",

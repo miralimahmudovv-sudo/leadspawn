@@ -12,6 +12,12 @@
       "runtimeExecutable": "C:\\Users\\miral\\AppData\\Local\\pnpm\\pnpm.exe",
       "runtimeArgs": ["-C", "C:\\Users\\miral\\Desktop\\Social Publisher\\social-publisher", "dev"],
       "port": 1420
+    },
+    {
+      "name": "silver-atlas-site",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4173", "--directory", "C:\\Users\\miral\\Desktop\\silver-atlas-site"],
+      "port": 4173
     }
   ]
 }

@@ -4,6 +4,7 @@ import { useAuth } from '@/components/AuthProvider'
 import { GoogleSignIn } from '@/components/GoogleSignIn'
 import { LanguageMenu } from '@/components/LanguageMenu'
 import { LogoMark } from '@/components/Logo'
+import { OnlineCounter } from '@/components/OnlineCounter'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { UsageGauge } from '@/components/UsageGauge'
 import { UserMenu } from '@/components/UserMenu'
@@ -39,6 +40,7 @@ export function Header({ showBrand, onOpenPricing, onOpenAccount }: HeaderProps)
           <div />
         )}
         <div className="flex items-center gap-2">
+          <OnlineCounter />
           <UsageGauge onClick={onOpenPricing} />
           {user ? (
             <UserMenu onOpenPricing={onOpenPricing} onOpenAccount={onOpenAccount} />
